@@ -12,4 +12,18 @@
     <color name="gray">#757575</color>
     <color name="switch_thumb">#00D6C3</color>
     <color name="switch_track">#76EAE0</color>
+    <color name="search_field_light">#E6E8EB</color>
+    <color name="search_field_dark">#2C2D31</color>
+    <color name="yp_black">#1A1B22</color>
+
+    <color name="search_text_light">#1A1B22</color>
+    <color name="search_text_dark">#FFFFFF</color>
+    <color name="search_hint_light">#AEAFB4</color>
+    <color name="search_hint_dark">#AEAFB4</color>
+
+    <color name="clear_button_color">#818C99</color>
+
+    <color name="search_icon_tint">#818C99</color>
+    <color name="search_text_color">#1A1B22</color>
+    <color name="search_hint_color">#AEAFB4</color>
 </resources>

@@ -4,131 +4,77 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/blue_background"
+    android:background="?attr/colorPrimary"
     android:padding="@dimen/main_padding">
 
 
-    <TextView
+<TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/playlist_maker_title"
-        android:textSize="@dimen/title_text_size"
-        android:textColor="@color/white"
-        android:textStyle="bold"
         android:layout_marginTop="@dimen/title_margin_top"
-        android:layout_marginBottom="@dimen/title_margin_bottom" />
+        android:layout_marginBottom="@dimen/title_margin_bottom"
+        style="@style/MainTitleStyle"/>
 
-
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/card_search"
+        style="@style/MainCardTextStyle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_marginBottom="@dimen/card_margin_bottom"
-        app:cardCornerRadius="@dimen/card_corner_radius"
-        app:cardElevation="@dimen/card_elevation"
-        app:cardBackgroundColor="@color/white">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:padding="@dimen/card_padding">
-
-            <ImageView
-                android:layout_width="@dimen/icon_size_main"
-                android:layout_height="@dimen/icon_size_main"
-                android:contentDescription="@string/search_description"
-                android:src="@drawable/ic_search"
-                app:tint="@color/text_black" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/text_margin_start"
-                android:text="@string/search"
-                android:textColor="@color/text_black"
-                android:textSize="@dimen/card_text_size"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
+        app:cornerRadius="@dimen/card_corner_radius"
+        app:backgroundTint="@color/white"
+        android:text="@string/search"
+        android:textAllCaps="false"
+        app:icon="@drawable/ic_search"
+        app:iconSize="21dp"
+        app:iconTint="@color/text_black"
+        app:iconGravity="textStart"
+        app:iconPadding="@dimen/text_margin_start"
+        android:insetLeft="0dp"
+        android:insetTop="0dp"
+        android:insetRight="0dp"
+        android:insetBottom="0dp" />
 
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/card_media"
+        style="@style/MainCardTextStyle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_marginBottom="@dimen/card_margin_bottom"
-        app:cardCornerRadius="@dimen/card_corner_radius"
-        app:cardElevation="@dimen/card_elevation"
-        app:cardBackgroundColor="@color/white">
+        app:cornerRadius="@dimen/card_corner_radius"
+        app:backgroundTint="@color/white"
+        android:text="@string/media_library"
+        android:textAllCaps="false"
+        app:icon="@drawable/ic_media"
+        app:iconTint="@color/text_black"
+        app:iconGravity="textStart"
+        app:iconPadding="@dimen/text_margin_start"
+        android:insetLeft="0dp"
+        android:insetTop="0dp"
+        android:insetRight="0dp"
+        android:insetBottom="0dp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:padding="@dimen/card_padding">
-
-            <ImageView
-                android:layout_width="@dimen/icon_size_main"
-                android:layout_height="@dimen/icon_size_main"
-                android:src="@drawable/ic_media"
-                android:contentDescription="@string/media_library_description"
-                app:tint="@color/text_black" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/media_library"
-                android:textSize="@dimen/card_text_size"
-                android:textColor="@color/text_black"
-                android:layout_marginStart="@dimen/text_margin_start"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
-
-
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/card_settings"
+        style="@style/MainCardTextStyle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        app:cardCornerRadius="@dimen/card_corner_radius"
-        app:cardElevation="@dimen/card_elevation"
-        app:cardBackgroundColor="@color/white">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:padding="@dimen/card_padding">
-
-            <ImageView
-                android:layout_width="@dimen/icon_size_main"
-                android:layout_height="@dimen/icon_size_main"
-                android:src="@drawable/ic_settings"
-                android:contentDescription="@string/settings_description"
-                app:tint="@color/text_black" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/settings"
-                android:textSize="@dimen/card_text_size"
-                android:textColor="@color/text_black"
-                android:layout_marginStart="@dimen/text_margin_start"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
+        app:cornerRadius="@dimen/card_corner_radius"
+        app:backgroundTint="@color/white"
+        android:text="@string/settings"
+        android:textAllCaps="false"
+        app:icon="@drawable/ic_settings"
+        app:iconTint="@color/text_black"
+        app:iconGravity="textStart"
+        app:iconPadding="@dimen/text_margin_start"
+        android:insetLeft="0dp"
+        android:insetTop="0dp"
+        android:insetRight="0dp"
+        android:insetBottom="0dp" />
 
 </LinearLayout>

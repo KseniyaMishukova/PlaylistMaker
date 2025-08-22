@@ -3,10 +3,10 @@ package com.practicum.playlistmaker
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.core.view.WindowCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.android.material.button.MaterialButton
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,9 +21,9 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        val searchCard = findViewById<CardView>(R.id.card_search)
-        val mediaCard = findViewById<CardView>(R.id.card_media)
-        val settingsCard = findViewById<CardView>(R.id.card_settings)
+        val searchCard = findViewById<MaterialButton>(R.id.card_search)
+        val mediaCard = findViewById<MaterialButton>(R.id.card_media)
+        val settingsCard = findViewById<MaterialButton>(R.id.card_settings)
 
         searchCard.setOnClickListener {
             val intent = Intent(this, SearchActivity::class.java)
