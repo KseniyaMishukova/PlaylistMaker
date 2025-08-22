@@ -1,19 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:orientation="vertical"
+    android:background="?attr/colorPrimary"
+    android:padding="@dimen/main_padding">
 
-    <TextView
+
+<TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="@string/playlist_maker_title"
+        android:layout_marginTop="@dimen/title_margin_top"
+        android:layout_marginBottom="@dimen/title_margin_bottom"
+        style="@style/MainTitleStyle"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/card_search"
+        style="@style/MainCardTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="@dimen/card_margin_bottom"
+        app:cornerRadius="@dimen/card_corner_radius"
+        app:backgroundTint="@color/white"
+        android:text="@string/search"
+        android:textAllCaps="false"
+        app:icon="@drawable/ic_search"
+        app:iconSize="21dp"
+        app:iconTint="@color/text_black"
+        app:iconGravity="textStart"
+        app:iconPadding="@dimen/text_margin_start"
+        android:insetLeft="0dp"
+        android:insetTop="0dp"
+        android:insetRight="0dp"
+        android:insetBottom="0dp" />
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/card_media"
+        style="@style/MainCardTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="@dimen/card_margin_bottom"
+        app:cornerRadius="@dimen/card_corner_radius"
+        app:backgroundTint="@color/white"
+        android:text="@string/media_library"
+        android:textAllCaps="false"
+        app:icon="@drawable/ic_media"
+        app:iconTint="@color/text_black"
+        app:iconGravity="textStart"
+        app:iconPadding="@dimen/text_margin_start"
+        android:insetLeft="0dp"
+        android:insetTop="0dp"
+        android:insetRight="0dp"
+        android:insetBottom="0dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/card_settings"
+        style="@style/MainCardTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:cornerRadius="@dimen/card_corner_radius"
+        app:backgroundTint="@color/white"
+        android:text="@string/settings"
+        android:textAllCaps="false"
+        app:icon="@drawable/ic_settings"
+        app:iconTint="@color/text_black"
+        app:iconGravity="textStart"
+        app:iconPadding="@dimen/text_margin_start"
+        android:insetLeft="0dp"
+        android:insetTop="0dp"
+        android:insetRight="0dp"
+        android:insetBottom="0dp" />
+
+</LinearLayout>
