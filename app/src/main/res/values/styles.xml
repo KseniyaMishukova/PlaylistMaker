@@ -9,11 +9,12 @@
      </style>
 
 
-     <style name="MainCardTextStyle">
+    <style name="MainCardTextStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
          <item name="android:textSize">@dimen/card_text_size</item>
          <item name="android:textColor">@color/text_black</item>
          <item name="android:textStyle">bold</item>
          <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textAllCaps">false</item>
      </style>
 
 

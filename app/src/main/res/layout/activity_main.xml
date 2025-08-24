@@ -18,7 +18,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/card_search"
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        style="@style/MainCardTextStyle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -26,9 +26,6 @@
         app:cornerRadius="@dimen/card_corner_radius"
         app:backgroundTint="@color/white"
         android:text="@string/search"
-        android:textColor="@color/text_black"
-        android:textSize="22sp"
-        android:textAllCaps="false"
         app:icon="@drawable/ic_search"
         app:iconSize="21dp"
         app:iconTint="@color/text_black"
@@ -42,7 +39,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/card_media"
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        style="@style/MainCardTextStyle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -50,9 +47,6 @@
         app:cornerRadius="@dimen/card_corner_radius"
         app:backgroundTint="@color/white"
         android:text="@string/media_library"
-        android:textColor="@color/text_black"
-        android:textSize="22sp"
-        android:textAllCaps="false"
         app:icon="@drawable/ic_media"
         app:iconTint="@color/text_black"
         app:iconGravity="textStart"
@@ -64,16 +58,13 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/card_settings"
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        style="@style/MainCardTextStyle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         app:cornerRadius="@dimen/card_corner_radius"
         app:backgroundTint="@color/white"
         android:text="@string/settings"
-        android:textColor="@color/text_black"
-        android:textSize="22sp"
-        android:textAllCaps="false"
         app:icon="@drawable/ic_settings"
         app:iconTint="@color/text_black"
         app:iconGravity="textStart"
