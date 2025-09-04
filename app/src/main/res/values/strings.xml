@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">Playlist Maker</string>
-    <string name="playlist_maker_title">Playlist maker</string>
-    <string name="search">Поиск</string>
-    <string name="media_library">Медиатека</string>
-    <string name="settings">Настройки</string>
-    <string name="search_description">Поиск</string>
-    <string name="media_library_description">Медиатека</string>
-    <string name="settings_description">Настройки</string>
+ <resources>
+     <string name="app_name">Playlist Maker</string>
+     <string name="playlist_maker_title">Playlist maker</string>
+     <string name="search">Поиск</string>
+     <string name="media_library">Медиатека</string>
+     <string name="settings">Настройки</string>
+     <string name="search_description">Поиск</string>
+     <string name="media_library_description">Медиатека</string>
+     <string name="settings_description">Настройки</string>
 
 
-    <string name="settings_title">Настройки</string>
-    <string name="back_button">Назад</string>
-    <string name="dark_theme">Темная тема</string>
-    <string name="share_app">Поделиться приложением</string>
-    <string name="contact_support">Написать в поддержку</string>
-    <string name="user_agreement">Пользовательское соглашение</string>
-    <string name="share_app_description">Поделиться</string>
-    <string name="contact_support_description">Поддержка</string>
-    <string name="user_agreement_description">Соглашение</string>
+     <string name="settings_title">Настройки</string>
+     <string name="back_button">Назад</string>
+     <string name="dark_theme">Темная тема</string>
+     <string name="share_app">Поделиться приложением</string>
+     <string name="contact_support">Написать в поддержку</string>
+     <string name="user_agreement">Пользовательское соглашение</string>
+     <string name="share_app_description">Поделиться</string>
+     <string name="contact_support_description">Поддержка</string>
+     <string name="user_agreement_description">Соглашение</string>
 
-    <string name="practicum_android_course_url">https://practicum.yandex.ru/android-developer/</string>
-    <string name="share_message_text">Посмотри курс по Android‑разработке в Практикуме: %1$s</string>
+     <string name="practicum_android_course_url">https://practicum.yandex.ru/android-developer/</string>
+     <string name="share_message_text">Посмотри курс по Android‑разработке в Практикуме: %1$s</string>
 
-    <string name="support_email">kis.nik.99@example.com</string>
-    <string name="email_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
-    <string name="email_body">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+     <string name="support_email">kis.nik.99@example.com</string>
+     <string name="email_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
+     <string name="email_body">Спасибо разработчикам и разработчицам за крутое приложение!</string>
 
-    <string name="practicum_offer_url">https://yandex.ru/legal/practicum_offer/ru/</string>
+     <string name="practicum_offer_url">https://yandex.ru/legal/practicum_offer/ru/</string>
 
-    <string name="title">Поиск</string>
-    <string name="search_hint">Поиск</string>
-    <string name="back_button_description">Назад</string>
-    <string name="clear_search_description">Очистить поиск</string>
-    <string name="x">x</string>
-</resources>
+     <string name="title">Поиск</string>
+     <string name="search_hint">Поиск</string>
+     <string name="back_button_description">Назад</string>
+     <string name="clear_search_description">Очистить поиск</string>
+     <string name="x">x</string>
+ </resources>
