@@ -19,4 +19,21 @@
      <dimen name="settings_title_size">25sp</dimen>
      <dimen name="settings_title_margin">35dp</dimen>
      <dimen name="icon_size_settings">24dp</dimen>
+
+    <dimen name="track_cover_size">45dp</dimen>
+    <dimen name="track_cover_margin_start">13dp</dimen>
+    <dimen name="track_cover_margin_top">8dp</dimen>
+
+    <dimen name="track_title_width">250dp</dimen>
+    <dimen name="track_title_height">19dp</dimen>
+    <dimen name="track_title_margin_start">66dp</dimen>
+    <dimen name="track_title_margin_top">14dp</dimen>
+
+    <dimen name="track_artist_width">54dp</dimen>
+    <dimen name="track_artist_height">13dp</dimen>
+
+    <dimen name="track_time_width">64dp</dimen>
+    <dimen name="track_time_height">13dp</dimen>
+    <dimen name="item_track_height">61dp</dimen>
+    <dimen name="track_corner_radius">8dp</dimen>
 </resources>
