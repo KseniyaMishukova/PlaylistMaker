@@ -6,4 +6,8 @@
     <color name="search_hint_color">#1A1B22</color>
 
     <color name="onSurfaceSecondary">#AEAFB4</color>
+    <color name="search_field_background">#FFFFFF</color>
+
+    <color name="chevron_color">#FFFFFF</color>
+    <color name="track_separator">#FFFFFF</color>
  </resources>

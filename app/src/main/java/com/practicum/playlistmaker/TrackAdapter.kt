@@ -25,13 +25,13 @@ class TrackAdapter(
         fun bind(item: Track) {
             tvTrackName.text = item.trackName
             tvArtist.text = item.artistName
-            tvTime.text = "• ${item.trackTime}"
+            tvTime.text = item.trackTime
 
             val r = itemView.resources.getDimensionPixelSize(R.dimen.track_corner_radius)
             Glide.with(itemView)
                 .load(item.artworkUrl100)
-                .placeholder(R.drawable.placeholder_cover)
-                .error(R.drawable.placeholder_cover)
+                .placeholder(R.drawable.ic_zig)
+                .error(R.drawable.ic_zig)
                 .centerCrop()
                 .transform(RoundedCorners(r))
                 .into(ivCover)

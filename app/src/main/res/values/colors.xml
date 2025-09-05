@@ -23,8 +23,14 @@
 
      <color name="clear_button_color">#818C99</color>
 
-     <color name="search_icon_tint">#818C99</color>
+    <color name="chevron_color">#AEAFB4</color>
+
+     <color name="search_icon_tint">#AEAFB4</color>
      <color name="search_text_color">#1A1B22</color>
      <color name="search_hint_color">#AEAFB4</color>
     <color name="onSurfaceSecondary">#AEAFB4</color>
+
+    <color name="track_separator">#AEAFB4</color>
+
+    <color name="search_field_background">@color/search_field_light</color>
  </resources>
