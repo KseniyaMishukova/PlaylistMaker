@@ -34,26 +34,13 @@
     <TextView
         android:id="@+id/tvArtist"
         style="@style/YsRegularMeta"
-        android:layout_width="@dimen/track_artist_width"
+        android:layout_width="wrap_content"
         android:layout_height="@dimen/track_artist_height"
         android:maxLines="1"
         android:ellipsize="end"
         android:gravity="top"
         app:layout_constraintStart_toStartOf="@id/tvTrackName"
         app:layout_constraintTop_toBottomOf="@id/tvTrackName" />
-
-    <TextView
-        android:id="@+id/tvTime"
-        style="@style/YsRegularMeta"
-        android:layout_width="@dimen/track_time_width"
-        android:layout_height="@dimen/track_time_height"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:gravity="top"
-        app:layout_constraintStart_toEndOf="@id/tvArtist"
-        app:layout_constraintTop_toTopOf="@id/tvArtist"
-        android:layout_marginStart="@dimen/track_time_height"
-        />
 
     <ImageView
         android:id="@+id/ellipse_1"
@@ -62,12 +49,22 @@
         android:src="@drawable/ellipse_1"
         android:contentDescription="@null"
         android:scaleType="centerInside"
-        android:layout_marginStart="@dimen/track_title_margin_start_2"
         android:layout_marginEnd="@dimen/separator_margin_end"
         app:layout_constraintStart_toEndOf="@id/tvArtist"
         app:layout_constraintEnd_toStartOf="@id/tvTime"
         app:layout_constraintTop_toTopOf="@id/tvArtist"
         app:layout_constraintBottom_toBottomOf="@id/tvArtist" />
+
+    <TextView
+        android:id="@+id/tvTime"
+        style="@style/YsRegularMeta"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/track_time_height"
+        android:ellipsize="end"
+        android:gravity="top"
+        android:maxLines="1"
+        app:layout_constraintStart_toEndOf="@id/ellipse_1"
+        app:layout_constraintTop_toTopOf="@id/tvArtist" />
 
     <ImageView
         android:id="@+id/ivChevron"
