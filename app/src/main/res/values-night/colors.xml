@@ -10,4 +10,8 @@
 
     <color name="chevron_color">#FFFFFF</color>
     <color name="track_separator">#FFFFFF</color>
+
+    <color name="search_placeholder_text">#FFFFFFFF</color>
+    <color name="search_error_text_color">#FFFFFFFF</color>
+    <color name="retry_label_color">#1A1B22</color>
  </resources>

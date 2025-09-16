@@ -12,8 +12,15 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 
 
 class TrackAdapter(
-    private val items: List<Track>
+    private val items: MutableList<Track>
 ) : RecyclerView.Adapter<TrackAdapter.TrackViewHolder>() {
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun setItems(newItems: List<Track>) {
+        items.clear()
+        items.addAll(newItems)
+        notifyDataSetChanged()
+    }
 
     class TrackViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val ivCover: ImageView = view.findViewById(R.id.ivCover)
