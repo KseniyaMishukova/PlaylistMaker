@@ -34,4 +34,8 @@
      <string name="back_button_description">Назад</string>
      <string name="clear_search_description">Очистить поиск</string>
      <string name="x">x</string>
+
+    <string name="some_id">Ничего не нашлось</string>
+    <string name="search_error_text">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="retry_label">Обновить</string>
  </resources>

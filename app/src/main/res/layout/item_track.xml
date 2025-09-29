@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="@dimen/item_track_height"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="?attr/colorSurface"
     android:paddingStart="@dimen/track_cover_margin_start"
-    android:paddingEnd="16dp"
-    >
+    android:paddingEnd="16dp">
 
     <ImageView
         android:id="@+id/ivCover"
@@ -36,6 +36,7 @@
         style="@style/YsRegularMeta"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/track_artist_height"
+        
         android:maxLines="1"
         android:ellipsize="end"
         android:gravity="top"

@@ -76,8 +76,9 @@
                      android:hint="@string/search_hint"
                      android:inputType="text"
                      android:maxLines="1"
+                     android:singleLine="true"
                      android:textSize="16sp"
-                     android:imeOptions="actionSearch"
+                     android:imeOptions="actionDone"
                      android:padding="0dp"
                      android:textColor="@color/search_text_color"
                      android:textColorHint="@color/search_hint_color"
@@ -102,14 +103,92 @@
 
 
      </FrameLayout>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvTracks"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        xmlns:tools="http://schemas.android.com/tools"
-        tools:listitem="@layout/item_track"
-        tools:itemCount="6"
-        android:background="@android:color/transparent"
-        android:layout_marginTop="14dp"/>
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvTracks"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            xmlns:tools="http://schemas.android.com/tools"
+            tools:listitem="@layout/item_track"
+            tools:itemCount="6"/>
+
+        <RelativeLayout
+            android:id="@+id/il_search"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="114dp"
+            android:clipToOutline="true"
+            android:visibility="gone">
+            <ImageView
+                android:id="@+id/il_search_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/light_mode"
+                android:contentDescription="@null"/>
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_placeholder_empty"
+            android:layout_width="312dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="250dp"
+            android:text="@string/some_id"
+            android:textAppearance="@style/some_id"
+            android:textColor="@color/search_placeholder_text"
+            android:gravity="center_horizontal|top"
+            android:visibility="gone"/>
+
+        <RelativeLayout
+            android:id="@+id/il_internet"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="114dp"
+            android:clipToOutline="true"
+            android:visibility="gone">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/light_mode_1"
+                android:contentDescription="@null"/>
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_placeholder_error"
+            android:layout_width="312dp"
+            android:layout_height="88dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="250dp"
+            android:text="@string/search_error_text"
+            android:textAppearance="@style/search_error_text"
+            android:textColor="@color/search_error_text_color"
+            android:textAlignment="center"
+            android:gravity="center_horizontal|top"
+            android:visibility="gone"/>
+
+        <RelativeLayout
+            android:id="@+id/btn_retry"
+            android:layout_width="91dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="362dp"
+            android:background="@drawable/button"
+            android:visibility="gone">
+            <TextView
+                android:id="@+id/label"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/retry_label"
+                android:textAppearance="@style/retry_label"
+                android:textAlignment="center"
+                android:gravity="center"/>
+        </RelativeLayout>
+    </FrameLayout>
  </LinearLayout>
