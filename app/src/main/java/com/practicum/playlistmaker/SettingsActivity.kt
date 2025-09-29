@@ -79,25 +79,13 @@ package com.practicum.playlistmaker
 
 
          switchDarkTheme.setOnCheckedChangeListener { _, isChecked ->
-             if (isChecked) {
-                 enableDarkTheme()
-             } else {
-                 enableLightTheme()
-             }
+             ThemeManager.setDarkTheme(this, isChecked)
          }
      }
 
 
      private fun isDarkThemeEnabled(): Boolean {
-
-         return AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
+         return ThemeStorage(this).isDarkTheme()
      }
 
-     private fun enableDarkTheme() {
-         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
      }
-
-     private fun enableLightTheme() {
-         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-     }
- }

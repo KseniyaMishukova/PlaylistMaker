@@ -27,6 +27,7 @@
 
      <color name="search_icon_tint">#AEAFB4</color>
      <color name="search_text_color">#1A1B22</color>
+    <color name="search_text_color1">#AEAFB4</color>
      <color name="search_hint_color">#AEAFB4</color>
     <color name="onSurfaceSecondary">#AEAFB4</color>
 
@@ -34,6 +35,11 @@
     <color name="search_placeholder_text">#1A1B22</color>
     <color name="search_error_text_color">#1A1B22</color>
     <color name="retry_label_color">#FFFFFF</color>
+
+    <color name="historyListBg">#FFFFFF</color>
+    <color name="historyTitle">#1A1B22</color>
+    <color name="historyButtonBg">#1A1B22</color>
+    <color name="historyButtonText">#FFFFFF</color>
 
     <color name="search_field_background">@color/search_field_light</color>
  </resources>
