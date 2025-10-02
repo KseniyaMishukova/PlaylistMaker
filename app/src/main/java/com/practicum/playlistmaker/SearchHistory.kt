@@ -38,7 +38,7 @@ class SearchHistory(
 
         if (list.size > MAX_SIZE) {
             while (list.size > MAX_SIZE) {
-                list.lastIndex
+                list.removeAt(list.lastIndex)
             }
         }
 

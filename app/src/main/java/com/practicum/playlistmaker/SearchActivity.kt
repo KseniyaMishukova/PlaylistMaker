@@ -29,7 +29,6 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var recycler: RecyclerView
     private lateinit var adapter: TrackAdapter
 
-
     private lateinit var historySection: View
     private lateinit var historyTitle: TextView
     private lateinit var clearHistoryBtn: View
@@ -62,21 +61,20 @@ class SearchActivity : AppCompatActivity() {
 
         interactor = SearchInteractor(this)
 
-
         historySection = findViewById(R.id.history_section)
         historyTitle = findViewById(R.id.ys_medium_1)
         clearHistoryBtn = findViewById(R.id.button1)
         historyRecycler = findViewById(R.id.history_recycler)
         historyRecycler.layoutManager = LinearLayoutManager(this)
-        historyAdapter = TrackAdapter(mutableListOf()) { track -> interactor.addToHistory(track) }
+        historyAdapter = TrackAdapter(mutableListOf()) { track ->
+            interactor.addToHistory(track)
+        }
         historyRecycler.adapter = historyAdapter
 
         clearHistoryBtn.setOnClickListener {
             interactor.clearHistory()
             updateHistoryVisibility(false)
-            renderHistory(emptyList())
         }
-
 
         errorImage = findViewById(R.id.il_internet)
         errorText = findViewById(R.id.tv_placeholder_error)
@@ -91,18 +89,14 @@ class SearchActivity : AppCompatActivity() {
         placeholderImage = findViewById(R.id.il_search)
         placeholderText = findViewById(R.id.tv_placeholder_empty)
 
-
         recycler = findViewById(R.id.rvTracks)
         recycler.layoutManager = LinearLayoutManager(this)
         adapter = TrackAdapter(mutableListOf()) { track ->
             interactor.addToHistory(track)
-
         }
         recycler.adapter = adapter
 
-
         updateHistoryVisibility(false)
-
 
         searchEditText.requestFocus()
         showHistoryFlag = SearchUiLogic.shouldShowHistory(
@@ -111,7 +105,7 @@ class SearchActivity : AppCompatActivity() {
             historyIsEmpty = interactor.getHistory().isEmpty()
         )
         updateHistoryVisibility(showHistoryFlag)
-        renderHistory(if (showHistoryFlag) interactor.getHistory() else emptyList())
+        renderHistory(interactor.getHistory())
     }
 
     private fun showEmptyPlaceholder() {
@@ -155,9 +149,8 @@ class SearchActivity : AppCompatActivity() {
                         adapter.setItems(tracks)
                         hidePlaceholders()
                         recycler.visibility = View.VISIBLE
-                        // при показе результатов скрываем историю
+
                         updateHistoryVisibility(false)
-                        renderHistory(emptyList())
                     }
                 } else {
                     adapter.setItems(emptyList())
@@ -191,7 +184,9 @@ class SearchActivity : AppCompatActivity() {
                     historyIsEmpty = interactor.getHistory().isEmpty()
                 )
                 updateHistoryVisibility(showHistoryFlag)
-                renderHistory(if (showHistoryFlag) interactor.getHistory() else emptyList())
+                if (showHistoryFlag) {
+                    renderHistory(interactor.getHistory())
+                }
             }
             override fun afterTextChanged(s: Editable?) {}
         }
@@ -212,7 +207,9 @@ class SearchActivity : AppCompatActivity() {
                 historyIsEmpty = interactor.getHistory().isEmpty()
             )
             updateHistoryVisibility(showHistoryFlag)
-            renderHistory(if (showHistoryFlag) interactor.getHistory() else emptyList())
+            if (showHistoryFlag) {
+                renderHistory(interactor.getHistory())
+            }
         }
 
         clearButton.setOnClickListener {
@@ -225,7 +222,6 @@ class SearchActivity : AppCompatActivity() {
             hidePlaceholders()
             hideError()
             updateHistoryVisibility(false)
-            renderHistory(emptyList())
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(searchEditText.windowToken, 0)
         }
