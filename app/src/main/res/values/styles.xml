@@ -135,4 +135,14 @@
         <item name="android:gravity">end</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
     </style>
+
+    <style name="PlayerHeaderBase">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">24dp</item>
+        <item name="android:layout_marginEnd">24dp</item>
+        <item name="android:gravity">top</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+    </style>
 </resources>
