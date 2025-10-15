@@ -7,6 +7,7 @@ fun TrackDto.toDomain(): Track {
     val duration = SimpleDateFormat("mm:ss", Locale.getDefault())
         .format((trackTimeMillis ?: 0L))
     return Track(
+        trackId = trackId ?: (trackName.hashCode() + artistName.hashCode()).toLong(),
         trackName = trackName.orEmpty(),
         artistName = artistName.orEmpty(),
         trackTime = duration,

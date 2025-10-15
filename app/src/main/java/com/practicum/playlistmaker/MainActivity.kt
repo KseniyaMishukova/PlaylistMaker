@@ -12,6 +12,7 @@ package com.practicum.playlistmaker
  class MainActivity : AppCompatActivity() {
      override fun onCreate(savedInstanceState: Bundle?) {
          super.onCreate(savedInstanceState)
+         ThemeManager.applySavedTheme(this)
 
          WindowCompat.setDecorFitsSystemWindows(window, false)
          setContentView(R.layout.activity_main)

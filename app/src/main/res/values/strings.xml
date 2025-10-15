@@ -38,4 +38,7 @@
     <string name="some_id">Ничего не нашлось</string>
     <string name="search_error_text">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
     <string name="retry_label">Обновить</string>
+
+    <string name="ys_medium_1">Вы искали</string>
+    <string name="label">Очистить историю</string>
  </resources>

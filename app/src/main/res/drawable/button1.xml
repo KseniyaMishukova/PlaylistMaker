@@ -1,5 +1,4 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="148dp"
     android:height="36dp"
     android:viewportWidth="148"
@@ -9,6 +8,6 @@
             android:pathData="M18 0H130C139.941 0 148 8.05887 148 18C148 27.9411 139.941 36 130 36H18C8.05887 36 0 27.9411 0 18C0 8.05887 8.05887 0 18 0Z"/>
         <path
             android:pathData="M0 0V36H148V0"
-            android:fillColor="#1A1B22"/>
+            android:fillColor="@color/historyButtonBg"/>
     </group>
 </vector>

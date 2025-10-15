@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 
-
 class TrackAdapter(
-    private val items: MutableList<Track>
+    private val items: MutableList<Track>,
+    private val onItemClick: (Track) -> Unit = {}
 ) : RecyclerView.Adapter<TrackAdapter.TrackViewHolder>() {
 
     @SuppressLint("NotifyDataSetChanged")
@@ -28,7 +28,6 @@ class TrackAdapter(
         private val tvArtist: TextView = view.findViewById(R.id.tvArtist)
         private val tvTime: TextView = view.findViewById(R.id.tvTime)
 
-        @SuppressLint("SetTextI18n")
         fun bind(item: Track) {
             tvTrackName.text = item.trackName
             tvArtist.text = item.artistName
@@ -51,7 +50,9 @@ class TrackAdapter(
     }
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
-        holder.bind(items[position])
+        val item = items[position]
+        holder.bind(item)
+        holder.itemView.setOnClickListener { onItemClick(item) }
     }
 
     override fun getItemCount(): Int = items.size
