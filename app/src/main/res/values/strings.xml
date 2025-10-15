@@ -41,4 +41,10 @@
 
     <string name="ys_medium_1">Вы искали</string>
     <string name="label">Очистить историю</string>
+
+    <string name="label_duration">Длительность</string>
+    <string name="label_album">Альбом</string>
+    <string name="label_year">Год</string>
+    <string name="label_genre">Жанр</string>
+    <string name="label_country">Страна</string>
  </resources>

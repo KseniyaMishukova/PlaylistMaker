@@ -32,6 +32,9 @@
             android:name=".SettingsActivity"
             android:theme="@style/Theme.PlaylistMaker.Settings" />
 
+        <activity
+            android:name=".AudioPlayerActivity"
+            android:exported="false" />
 
     </application>
 </manifest>

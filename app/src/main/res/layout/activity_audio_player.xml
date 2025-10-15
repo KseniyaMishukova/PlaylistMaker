@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="?attr/colorSurface"
+    android:paddingBottom="25dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <RelativeLayout
+            android:id="@+id/panel_heade"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageView
+                android:id="@+id/back_button"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:contentDescription="@string/back_button"
+                android:src="@drawable/outline_arrow_back_24"
+                app:tint="?attr/colorOnSurface" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/album"
+            android:layout_width="312dp"
+            android:layout_height="312dp"
+            android:clipToOutline="true"
+            android:background="@drawable/album"
+            app:layout_constraintTop_toBottomOf="@id/panel_heade"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="24dp">
+
+            <ImageView
+                android:id="@+id/ivCoverLarge"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_zig" />
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="24dp"
+            android:textAppearance="@style/yesterday_r"
+            android:gravity="top"
+            app:layout_constraintTop_toBottomOf="@id/album"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+        <TextView
+            android:id="@+id/tvArtist"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="12dp"
+            android:textAppearance="@style/the_beatles"
+            android:gravity="top"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+        <RelativeLayout
+            android:id="@+id/btnAddToPlaylist"
+            android:layout_width="51dp"
+            android:layout_height="51dp"
+            app:layout_constraintTop_toBottomOf="@id/tvArtist"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="64dp"
+            android:layout_marginStart="24dp">
+
+            <ImageView
+                android:layout_width="51dp"
+                android:layout_height="51dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_playlist"
+                 />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/btnPlay"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:layout_constraintTop_toBottomOf="@id/tvArtist"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="38dp">
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_play"
+                app:tint="?attr/colorOnSurface"
+                android:contentDescription="@null" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/btnFavorite"
+            android:layout_width="51dp"
+            android:layout_height="51dp"
+            app:layout_constraintTop_toBottomOf="@id/tvArtist"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="64dp"
+            android:layout_marginEnd="24dp">
+
+            <ImageView
+                android:layout_width="51dp"
+                android:layout_height="51dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_like"
+                android:contentDescription="@null" />
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/tvProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0:00"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="14sp"
+            android:fontFamily="@font/ys_display_medium"
+            android:lineHeight="16sp"
+            app:layout_constraintTop_toBottomOf="@id/btnPlay"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="15dp" />
+
+
+        <TextView
+            android:id="@+id/labelDuration"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="40dp"
+            android:text="@string/label_duration"
+            android:fontFamily="@font/ys_display_regular"
+            android:textColor="#AEAFB4"
+            android:textSize="13sp"
+            app:layout_constraintTop_toBottomOf="@id/tvProgress"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/valueDuration"
+            app:layout_constraintHorizontal_weight="1" />
+
+        <TextView
+            android:id="@+id/valueDuration"
+            style="@style/PlayerMetaValue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBaseline_toBaselineOf="@id/labelDuration"
+            app:layout_constraintStart_toEndOf="@id/labelDuration"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintHorizontal_weight="1" />
+
+
+        <TextView
+            android:id="@+id/labelAlbum"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/ys_display_regular"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/label_album"
+            android:textColor="#AEAFB4"
+            android:textSize="13sp"
+            app:layout_constraintTop_toBottomOf="@id/labelDuration"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/valueAlbum" />
+
+        <TextView
+            android:id="@+id/valueAlbum"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            style="@style/PlayerMetaValue"
+            app:layout_constraintBaseline_toBaselineOf="@id/labelAlbum"
+            app:layout_constraintStart_toEndOf="@id/labelAlbum"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+
+        <TextView
+            android:id="@+id/labelYear"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/ys_display_regular"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/label_year"
+            android:textColor="#AEAFB4"
+            android:textSize="13sp"
+            app:layout_constraintTop_toBottomOf="@id/labelAlbum"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/valueYear" />
+
+        <TextView
+            android:id="@+id/valueYear"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            style="@style/PlayerMetaValue"
+            app:layout_constraintBaseline_toBaselineOf="@id/labelYear"
+            app:layout_constraintStart_toEndOf="@id/labelYear"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+        <TextView
+            android:id="@+id/labelGenre"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/ys_display_regular"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/label_genre"
+            android:textColor="#AEAFB4"
+            android:textSize="13sp"
+            app:layout_constraintTop_toBottomOf="@id/labelYear"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/valueGenre" />
+
+        <TextView
+            android:id="@+id/valueGenre"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            style="@style/PlayerMetaValue"
+            app:layout_constraintBaseline_toBaselineOf="@id/labelGenre"
+            app:layout_constraintStart_toEndOf="@id/labelGenre"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+        <TextView
+            android:id="@+id/labelCountry"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/ys_display_regular"
+            android:layout_marginTop="16dp"
+            android:text="@string/label_country"
+            android:textColor="#AEAFB4"
+            android:textSize="13sp"
+            app:layout_constraintTop_toBottomOf="@id/labelGenre"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/valueCountry" />
+
+        <TextView
+            android:id="@+id/valueCountry"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            style="@style/PlayerMetaValue"
+            app:layout_constraintBaseline_toBaselineOf="@id/labelCountry"
+            app:layout_constraintStart_toEndOf="@id/labelCountry"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="24dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

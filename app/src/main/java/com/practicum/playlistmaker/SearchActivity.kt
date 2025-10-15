@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker
 
+import android.content.Intent
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.inputmethod.EditorInfo
@@ -68,6 +69,12 @@ class SearchActivity : AppCompatActivity() {
         historyRecycler.layoutManager = LinearLayoutManager(this)
         historyAdapter = TrackAdapter(mutableListOf()) { track ->
             interactor.addToHistory(track)
+            startActivity(
+                Intent(this, AudioPlayerActivity::class.java).putExtra(
+                    AudioPlayerActivity.EXTRA_TRACK,
+                    track
+                )
+            )
         }
         historyRecycler.adapter = historyAdapter
 
@@ -93,6 +100,12 @@ class SearchActivity : AppCompatActivity() {
         recycler.layoutManager = LinearLayoutManager(this)
         adapter = TrackAdapter(mutableListOf()) { track ->
             interactor.addToHistory(track)
+            startActivity(
+                Intent(this, AudioPlayerActivity::class.java).putExtra(
+                    AudioPlayerActivity.EXTRA_TRACK,
+                    track
+                )
+            )
         }
         recycler.adapter = adapter
 
@@ -140,7 +153,7 @@ class SearchActivity : AppCompatActivity() {
         RetrofitProvider.api.search(query).enqueue(object : Callback<TracksResponse> {
             override fun onResponse(call: Call<TracksResponse>, response: Response<TracksResponse>) {
                 if (response.isSuccessful) {
-                    val tracks = response.body()?.results?.map { it.toDomain() }.orEmpty()
+                    val tracks = response.body()?.results?.mapNotNull { it.toDomain() }.orEmpty()
                     hideError()
                     if (tracks.isEmpty()) {
                         adapter.setItems(emptyList())

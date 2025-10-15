@@ -19,4 +19,12 @@
    <color name="historyTitle">#FFFFFF</color>
    <color name="historyButtonBg">#FFFFFF</color>
    <color name="historyButtonText">#1A1B22</color>
+
+    <color name="circle_tint">#40FFFFFF</color>
+    <color name="icon_on_circle">#FFFFFF</color>
+
+    <color name="player_title">#FFFFFF</color>
+    <color name="player_artist">#FFFFFF</color>
+    <color name="player_meta_value">#FFFFFF</color>
+    <color name="player_meta_label">#AEAFB4</color>
  </resources>

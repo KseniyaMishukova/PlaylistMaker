@@ -42,4 +42,12 @@
     <color name="historyButtonText">#FFFFFF</color>
 
     <color name="search_field_background">@color/search_field_light</color>
+
+    <color name="circle_tint">#401A1B22</color>
+    <color name="icon_on_circle">#FFFFFF</color>
+
+    <color name="player_title">#1A1B22</color>
+    <color name="player_artist">#1A1B22</color>
+    <color name="player_meta_value">#1A1B22</color>
+    <color name="player_meta_label">#AEAFB4</color>
  </resources>
