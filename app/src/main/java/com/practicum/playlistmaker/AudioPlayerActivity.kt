@@ -289,6 +289,6 @@ class AudioPlayerActivity : AppCompatActivity() {
 
 
     private fun updatePlayButton(isPlaying: Boolean) {
-        ivPlayPause.setImageResource(if (isPlaying) R.drawable.ic_playb else R.drawable.ic_play)
+        ivPlayPause.setImageResource(if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play)
     }
 }

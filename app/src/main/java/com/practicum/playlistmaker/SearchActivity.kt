@@ -65,6 +65,9 @@ class SearchActivity : AppCompatActivity() {
     private var isClickAllowed = true
     private var isLoading = false
 
+    private var currentCall: Call<TracksResponse>? = null
+    private var requestToken: Long = 0L
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -175,15 +178,26 @@ class SearchActivity : AppCompatActivity() {
         if (loading) {
             hideError()
             hidePlaceholders()
+                     recycler.visibility = View.GONE
+                      updateHistoryVisibility(false)
         }
     }
 
     private fun performSearch(query: String) {
         if (query.isEmpty()) return
         lastQuery = query
+
+
+        currentCall?.cancel()
+        val myToken = System.nanoTime()
+        requestToken = myToken
         setLoading(true)
-        RetrofitProvider.api.search(query).enqueue(object : Callback<TracksResponse> {
+        val call = RetrofitProvider.api.search(query)
+        currentCall = call
+        call.enqueue(object : Callback<TracksResponse> {
+
             override fun onResponse(call: Call<TracksResponse>, response: Response<TracksResponse>) {
+                if (call.isCanceled || myToken != requestToken) return
                 setLoading(false)
                 if (response.isSuccessful) {
                     val tracks = response.body()?.results?.mapNotNull { it.toDomain() }.orEmpty()
@@ -203,6 +217,9 @@ class SearchActivity : AppCompatActivity() {
                 }
             }
             override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
+
+                if (call.isCanceled || myToken != requestToken) return
+
                 setLoading(false)
                 adapter.setItems(emptyList())
                 showError()
@@ -245,6 +262,8 @@ class SearchActivity : AppCompatActivity() {
 
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
+                searchHandler.removeCallbacksAndMessages(null)
+                searchRunnable = null
                 performSearch(searchText.trim())
                 true
             } else false
@@ -263,9 +282,10 @@ class SearchActivity : AppCompatActivity() {
         }
 
         clearButton.setOnClickListener {
-
             searchHandler.removeCallbacksAndMessages(null)
             searchRunnable = null
+            currentCall?.cancel()
+            requestToken = 0L
 
             searchEditText.setText("")
             searchEditText.clearFocus()
@@ -284,6 +304,7 @@ class SearchActivity : AppCompatActivity() {
     private fun debounceSearch(query: String) {
         searchRunnable?.let { searchHandler.removeCallbacks(it) }
         if (query.isEmpty()) return
+        if (query == lastQuery && !isLoading) return
         val runnable = Runnable { performSearch(query) }
         searchRunnable = runnable
         searchHandler.postDelayed(runnable, SEARCH_DEBOUNCE_DELAY)
