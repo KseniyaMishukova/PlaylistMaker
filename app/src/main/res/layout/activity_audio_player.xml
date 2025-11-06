@@ -86,7 +86,7 @@
                 android:layout_height="51dp"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_playlist"
-                 />
+                />
         </RelativeLayout>
 
 
@@ -100,6 +100,7 @@
             android:layout_marginTop="38dp">
 
             <ImageView
+                android:id="@+id/ivPlayPause"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_centerInParent="true"
@@ -193,8 +194,7 @@
             android:ellipsize="end"
             app:layout_constraintBaseline_toBaselineOf="@id/labelAlbum"
             app:layout_constraintStart_toEndOf="@id/labelAlbum"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
+            app:layout_constraintEnd_toEndOf="parent" />
 
 
         <TextView

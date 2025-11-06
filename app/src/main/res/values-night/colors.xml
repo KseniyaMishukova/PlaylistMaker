@@ -22,7 +22,7 @@
 
     <color name="circle_tint">#40FFFFFF</color>
     <color name="icon_on_circle">#FFFFFF</color>
-
+    <color name="progress_line">#3772E7</color>
     <color name="player_title">#FFFFFF</color>
     <color name="player_artist">#FFFFFF</color>
     <color name="player_meta_value">#FFFFFF</color>

@@ -49,5 +49,6 @@
     <color name="player_title">#1A1B22</color>
     <color name="player_artist">#1A1B22</color>
     <color name="player_meta_value">#1A1B22</color>
+    <color name="progress_line">#3772E7</color>
     <color name="player_meta_label">#AEAFB4</color>
  </resources>
