@@ -116,4 +116,33 @@
         <item name="android:gravity">center_horizontal</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
     </style>
+
+    <style name="yesterday_r">
+        <item name="android:textSize">22sp</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textColor">@color/player_title</item>
+    </style>
+
+    <style name="the_beatles">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textColor">@color/player_artist</item>
+    </style>
+
+    <style name="PlayerMetaValue">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/player_meta_value</item>
+        <item name="android:gravity">end</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+    </style>
+
+    <style name="PlayerHeaderBase">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">24dp</item>
+        <item name="android:layout_marginEnd">24dp</item>
+        <item name="android:gravity">top</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+    </style>
 </resources>
