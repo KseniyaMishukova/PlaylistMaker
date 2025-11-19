@@ -101,6 +101,17 @@
             android:contentDescription="@string/clear_search_description" />
     </FrameLayout>
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="140dp"
+        android:layout_gravity="center_horizontal"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/progress_line"
+        android:visibility="gone" />
+
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"

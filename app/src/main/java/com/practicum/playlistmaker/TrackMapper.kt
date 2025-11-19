@@ -23,6 +23,7 @@ fun TrackDto.toDomain(): Track? {
         collectionName = collectionName,
         releaseYear = year,
         primaryGenreName = primaryGenreName.orEmpty(),
-        country = country.orEmpty()
+        country = country.orEmpty(),
+        previewUrl = previewUrl.orEmpty()
     )
 }
