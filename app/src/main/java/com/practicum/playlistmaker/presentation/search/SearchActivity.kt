@@ -20,7 +20,9 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.domain.Track
+import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.domain.usecase.HistoryInteractor
+import com.practicum.playlistmaker.domain.usecase.SearchInteractor
 import com.practicum.playlistmaker.presentation.Creator
 import com.practicum.playlistmaker.presentation.audio.AudioPlayerActivity
 import com.practicum.playlistmaker.presentation.adapter.TrackAdapter
@@ -57,8 +59,8 @@ class SearchActivity : AppCompatActivity() {
     private var lastQuery: String = ""
     private var searchText: String = ""
 
-    private lateinit var searchInteractor: com.practicum.playlistmaker.domain.SearchInteractor
-    private lateinit var historyInteractor: com.practicum.playlistmaker.domain.HistoryInteractor
+    private lateinit var searchInteractor: SearchInteractor
+    private lateinit var historyInteractor: HistoryInteractor
     private var showHistoryFlag: Boolean = false
 
     private val searchHandler = Handler(Looper.getMainLooper())

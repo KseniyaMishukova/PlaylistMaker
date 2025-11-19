@@ -1,7 +1,10 @@
-package com.practicum.playlistmaker.data
+package com.practicum.playlistmaker.data.repository
 
-import com.practicum.playlistmaker.domain.SearchRepository
-import com.practicum.playlistmaker.domain.Track
+import com.practicum.playlistmaker.data.dto.TracksResponse
+import com.practicum.playlistmaker.data.network.ITunesApi
+import com.practicum.playlistmaker.data.utils.toDomain
+import com.practicum.playlistmaker.domain.repository.SearchRepository
+import com.practicum.playlistmaker.domain.models.Track
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

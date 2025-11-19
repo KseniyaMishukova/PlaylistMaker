@@ -1,16 +1,18 @@
-package com.practicum.playlistmaker.presentation
+package com.practicum.playlistmaker.presentation.main
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.button.MaterialButton
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.presentation.settings.SettingsActivity
-import com.practicum.playlistmaker.presentation.search.SearchActivity
+import com.practicum.playlistmaker.presentation.Creator
 import com.practicum.playlistmaker.presentation.media.MediaLibraryActivity
+import com.practicum.playlistmaker.presentation.search.SearchActivity
+import com.practicum.playlistmaker.presentation.settings.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,9 +20,9 @@ class MainActivity : AppCompatActivity() {
 
         val settingsInteractor = Creator.provideSettingsInteractor(this)
         val isDark = settingsInteractor.isDarkTheme()
-        androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
-            if (isDark) androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
-            else androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
+        AppCompatDelegate.setDefaultNightMode(
+            if (isDark) AppCompatDelegate.MODE_NIGHT_YES
+            else AppCompatDelegate.MODE_NIGHT_NO
         )
 
         WindowCompat.setDecorFitsSystemWindows(window, false)

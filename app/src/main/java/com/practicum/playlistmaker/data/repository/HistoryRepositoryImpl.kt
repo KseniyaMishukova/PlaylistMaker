@@ -1,11 +1,11 @@
-package com.practicum.playlistmaker.data
+package com.practicum.playlistmaker.data.repository
 
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.practicum.playlistmaker.domain.HistoryRepository
-import com.practicum.playlistmaker.domain.Track
+import com.practicum.playlistmaker.domain.repository.HistoryRepository
+import com.practicum.playlistmaker.domain.models.Track
 
 class HistoryRepositoryImpl(
     context: Context

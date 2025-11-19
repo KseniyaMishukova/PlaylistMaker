@@ -1,28 +1,31 @@
 package com.practicum.playlistmaker.presentation
 
 import android.content.Context
-import com.practicum.playlistmaker.data.HistoryRepositoryImpl
-import com.practicum.playlistmaker.data.SearchRepositoryImpl
-import com.practicum.playlistmaker.data.SettingsRepositoryImpl
-import com.practicum.playlistmaker.data.RetrofitProvider
-import com.practicum.playlistmaker.domain.HistoryInteractor
-import com.practicum.playlistmaker.domain.HistoryInteractorImpl
-import com.practicum.playlistmaker.domain.SearchInteractor
-import com.practicum.playlistmaker.domain.SearchInteractorImpl
-import com.practicum.playlistmaker.domain.SettingsInteractor
-import com.practicum.playlistmaker.domain.SettingsInteractorImpl
+import com.practicum.playlistmaker.data.repository.HistoryRepositoryImpl
+import com.practicum.playlistmaker.data.repository.SearchRepositoryImpl
+import com.practicum.playlistmaker.data.repository.SettingsRepositoryImpl
+import com.practicum.playlistmaker.data.network.RetrofitProvider
+import com.practicum.playlistmaker.domain.usecase.HistoryInteractor
+import com.practicum.playlistmaker.domain.usecase.HistoryInteractorImpl
+import com.practicum.playlistmaker.domain.usecase.SearchInteractor
+import com.practicum.playlistmaker.domain.usecase.SearchInteractorImpl
+import com.practicum.playlistmaker.domain.usecase.SettingsInteractor
+import com.practicum.playlistmaker.domain.usecase.SettingsInteractorImpl
+import com.practicum.playlistmaker.domain.repository.HistoryRepository
+import com.practicum.playlistmaker.domain.repository.SearchRepository
+import com.practicum.playlistmaker.domain.repository.SettingsRepository
 
 object Creator {
 
-    private fun provideSearchRepository(): com.practicum.playlistmaker.domain.SearchRepository {
+    private fun provideSearchRepository(): SearchRepository {
         return SearchRepositoryImpl(RetrofitProvider.api)
     }
 
-    private fun provideHistoryRepository(context: Context): com.practicum.playlistmaker.domain.HistoryRepository {
+    private fun provideHistoryRepository(context: Context): HistoryRepository {
         return HistoryRepositoryImpl(context)
     }
 
-    private fun provideSettingsRepository(context: Context): com.practicum.playlistmaker.domain.SettingsRepository {
+    private fun provideSettingsRepository(context: Context): SettingsRepository {
         return SettingsRepositoryImpl(context)
     }
 

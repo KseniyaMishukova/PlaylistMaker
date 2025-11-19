@@ -1,4 +1,7 @@
-package com.practicum.playlistmaker.domain
+package com.practicum.playlistmaker.domain.usecase
+
+import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.domain.repository.SearchRepository
 
 class SearchInteractorImpl(
     private val searchRepository: SearchRepository

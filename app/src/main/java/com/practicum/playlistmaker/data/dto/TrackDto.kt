@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.data
+package com.practicum.playlistmaker.data.dto
 
 data class TrackDto(
     val trackId: Long?,

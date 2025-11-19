@@ -1,4 +1,6 @@
-package com.practicum.playlistmaker.domain
+package com.practicum.playlistmaker.domain.usecase
+
+import com.practicum.playlistmaker.domain.repository.SettingsRepository
 
 class SettingsInteractorImpl(
     private val settingsRepository: SettingsRepository

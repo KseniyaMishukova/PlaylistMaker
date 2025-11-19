@@ -81,6 +81,7 @@
                     android:imeOptions="actionDone"
                     android:padding="0dp"
                     android:textColor="@color/search_text_color"
+                    android:textCursorDrawable="@drawable/cursor_drawable"
                     android:textColorHint="@color/search_hint_color"
                     android:autofillHints="text" />
             </LinearLayout>
