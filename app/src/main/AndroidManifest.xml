@@ -33,6 +33,7 @@
 
         <activity
             android:name=".presentation.audio.AudioPlayerActivity"
+            android:theme="@style/Theme.PlaylistMaker.Search"
             android:exported="false" />
 
     </application>
