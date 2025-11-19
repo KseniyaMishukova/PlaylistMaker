@@ -1,5 +1,7 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.data.utils
 
+import com.practicum.playlistmaker.data.dto.TrackDto
+import com.practicum.playlistmaker.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 

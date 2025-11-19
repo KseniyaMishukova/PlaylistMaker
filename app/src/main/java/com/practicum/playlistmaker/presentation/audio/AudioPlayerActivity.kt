@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.presentation.audio
 
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -13,6 +13,8 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.domain.models.Track
 import java.util.concurrent.TimeUnit
 
 class AudioPlayerActivity : AppCompatActivity() {
@@ -24,17 +26,14 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     private var track: Track? = null
 
-    // Player
     private var mediaPlayer: MediaPlayer? = null
     private enum class PlayerState { IDLE, PREPARING, PREPARED, PLAYING, PAUSED, COMPLETED, ERROR }
     private var playerState: PlayerState = PlayerState.IDLE
     private var startOnPrepared: Boolean = false
 
-    // Views
     private lateinit var tvProgress: TextView
     private lateinit var ivPlayPause: ImageView
 
-    // Progress handler
     private val progressHandler = Handler(Looper.getMainLooper())
     private val progressRunnable = object : Runnable {
         override fun run() {
@@ -83,13 +82,12 @@ class AudioPlayerActivity : AppCompatActivity() {
                     startPlayback()
                 }
                 PlayerState.IDLE -> preparePlayerAndPlay()
-                PlayerState.PREPARING, PlayerState.ERROR -> { /* ignore until ready */ }
+                PlayerState.PREPARING, PlayerState.ERROR -> { }
             }
         }
 
         track = intent?.getSerializableExtra(EXTRA_TRACK) as? Track
         bindTrack()
-
 
         preparePlayer()
         setProgressText(0L)
@@ -109,7 +107,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         stopProgressUpdates()
         releasePlayer()
     }
-
 
     private fun stopAndFinish() {
         stopProgressUpdates()
@@ -167,8 +164,6 @@ class AudioPlayerActivity : AppCompatActivity() {
             .into(ivCover)
     }
 
-
-
     private fun preparePlayer() {
         val url = track?.previewUrl.orEmpty()
         if (url.isEmpty()) {
@@ -219,7 +214,7 @@ class AudioPlayerActivity : AppCompatActivity() {
                 startOnPrepared = true
             }
             PlayerState.PAUSED, PlayerState.COMPLETED -> startPlayback()
-            else -> { /* no-op */ }
+            else -> { }
         }
     }
 
@@ -264,8 +259,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         playerState = PlayerState.IDLE
     }
 
-
-
     private fun startProgressUpdates() {
         stopProgressUpdates()
         progressHandler.post(progressRunnable)
@@ -285,8 +278,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         val seconds = totalSeconds % 60
         return String.format("%02d:%02d", minutes, seconds)
     }
-
-
 
     private fun updatePlayButton(isPlaying: Boolean) {
         ivPlayPause.setImageResource(if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play)

@@ -22,5 +22,6 @@
          <item name="colorOnSurface">@color/text_black</item>
          <item name="android:statusBarColor">@color/blue_background</item>
          <item name="android:windowBackground">@color/white</item>
+         <item name="colorControlActivated">@color/cursor_color</item>
      </style>
  </resources>

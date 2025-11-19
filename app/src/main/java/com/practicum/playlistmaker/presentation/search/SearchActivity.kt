@@ -1,12 +1,9 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.presentation.search
 
 import android.content.Intent
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.inputmethod.EditorInfo
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
@@ -22,6 +19,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.domain.usecase.HistoryInteractor
+import com.practicum.playlistmaker.domain.usecase.SearchInteractor
+import com.practicum.playlistmaker.presentation.Creator
+import com.practicum.playlistmaker.presentation.audio.AudioPlayerActivity
+import com.practicum.playlistmaker.presentation.adapter.TrackAdapter
 
 class SearchActivity : AppCompatActivity() {
 
@@ -55,18 +59,16 @@ class SearchActivity : AppCompatActivity() {
     private var lastQuery: String = ""
     private var searchText: String = ""
 
-    private lateinit var interactor: SearchInteractor
+    private lateinit var searchInteractor: SearchInteractor
+    private lateinit var historyInteractor: HistoryInteractor
     private var showHistoryFlag: Boolean = false
 
-    // Debounce/Loading state
     private val searchHandler = Handler(Looper.getMainLooper())
     private var searchRunnable: Runnable? = null
     private val clickHandler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
     private var isLoading = false
 
-    private var currentCall: Call<TracksResponse>? = null
-    private var requestToken: Long = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,7 +81,8 @@ class SearchActivity : AppCompatActivity() {
             insets
         }
 
-        interactor = SearchInteractor(this)
+        searchInteractor = Creator.provideSearchInteractor()
+        historyInteractor = Creator.provideHistoryInteractor(this)
 
         progressBar = findViewById(R.id.progressBar)
 
@@ -90,7 +93,7 @@ class SearchActivity : AppCompatActivity() {
         historyRecycler.layoutManager = LinearLayoutManager(this)
         historyAdapter = TrackAdapter(mutableListOf()) { track ->
             if (clickDebounce()) {
-                interactor.addToHistory(track)
+                historyInteractor.addTrack(track)
                 startActivity(
                     Intent(this, AudioPlayerActivity::class.java).putExtra(
                         AudioPlayerActivity.EXTRA_TRACK,
@@ -102,7 +105,7 @@ class SearchActivity : AppCompatActivity() {
         historyRecycler.adapter = historyAdapter
 
         clearHistoryBtn.setOnClickListener {
-            interactor.clearHistory()
+            historyInteractor.clearHistory()
             updateHistoryVisibility(false)
         }
 
@@ -123,7 +126,7 @@ class SearchActivity : AppCompatActivity() {
         recycler.layoutManager = LinearLayoutManager(this)
         adapter = TrackAdapter(mutableListOf()) { track ->
             if (clickDebounce()) {
-                interactor.addToHistory(track)
+                historyInteractor.addTrack(track)
                 startActivity(
                     Intent(this, AudioPlayerActivity::class.java).putExtra(
                         AudioPlayerActivity.EXTRA_TRACK,
@@ -137,13 +140,13 @@ class SearchActivity : AppCompatActivity() {
         updateHistoryVisibility(false)
 
         searchEditText.requestFocus()
-        showHistoryFlag = SearchUiLogic.shouldShowHistory(
+        showHistoryFlag = shouldShowHistory(
             hasFocus = true,
             queryText = searchEditText.text,
-            historyIsEmpty = interactor.getHistory().isEmpty()
+            historyIsEmpty = historyInteractor.getHistory().isEmpty()
         )
         updateHistoryVisibility(showHistoryFlag)
-        renderHistory(interactor.getHistory())
+        renderHistory(historyInteractor.getHistory())
     }
 
     private fun showEmptyPlaceholder() {
@@ -178,8 +181,8 @@ class SearchActivity : AppCompatActivity() {
         if (loading) {
             hideError()
             hidePlaceholders()
-                     recycler.visibility = View.GONE
-                      updateHistoryVisibility(false)
+            recycler.visibility = View.GONE
+            updateHistoryVisibility(false)
         }
     }
 
@@ -187,44 +190,25 @@ class SearchActivity : AppCompatActivity() {
         if (query.isEmpty()) return
         lastQuery = query
 
-
-        currentCall?.cancel()
-        val myToken = System.nanoTime()
-        requestToken = myToken
         setLoading(true)
-        val call = RetrofitProvider.api.search(query)
-        currentCall = call
-        call.enqueue(object : Callback<TracksResponse> {
-
-            override fun onResponse(call: Call<TracksResponse>, response: Response<TracksResponse>) {
-                if (call.isCanceled || myToken != requestToken) return
-                setLoading(false)
-                if (response.isSuccessful) {
-                    val tracks = response.body()?.results?.mapNotNull { it.toDomain() }.orEmpty()
-                    hideError()
-                    if (tracks.isEmpty()) {
-                        adapter.setItems(emptyList())
-                        showEmptyPlaceholder()
-                    } else {
-                        adapter.setItems(tracks)
-                        hidePlaceholders()
-                        recycler.visibility = View.VISIBLE
-                        updateHistoryVisibility(false)
-                    }
-                } else {
+        searchInteractor.searchTracks(query) { result ->
+            setLoading(false)
+            result.onSuccess { tracks ->
+                hideError()
+                if (tracks.isEmpty()) {
                     adapter.setItems(emptyList())
-                    showError()
+                    showEmptyPlaceholder()
+                } else {
+                    adapter.setItems(tracks)
+                    hidePlaceholders()
+                    recycler.visibility = View.VISIBLE
+                    updateHistoryVisibility(false)
                 }
-            }
-            override fun onFailure(call: Call<TracksResponse>, t: Throwable) {
-
-                if (call.isCanceled || myToken != requestToken) return
-
-                setLoading(false)
+            }.onFailure {
                 adapter.setItems(emptyList())
                 showError()
             }
-        })
+        }
     }
 
     private fun initViews() {
@@ -241,24 +225,22 @@ class SearchActivity : AppCompatActivity() {
                 clearButton.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
                 searchText = s?.toString() ?: ""
 
-
                 debounceSearch(searchText.trim())
 
-                showHistoryFlag = SearchUiLogic.shouldShowHistory(
+                showHistoryFlag = shouldShowHistory(
                     hasFocus = searchEditText.hasFocus(),
                     queryText = s,
-                    historyIsEmpty = interactor.getHistory().isEmpty()
+                    historyIsEmpty = historyInteractor.getHistory().isEmpty()
                 )
                 updateHistoryVisibility(showHistoryFlag)
                 if (showHistoryFlag) {
-                    renderHistory(interactor.getHistory())
+                    renderHistory(historyInteractor.getHistory())
                 }
             }
             override fun afterTextChanged(s: Editable?) {}
         }
 
         searchEditText.addTextChangedListener(searchTextWatcher)
-
 
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -270,22 +252,20 @@ class SearchActivity : AppCompatActivity() {
         }
 
         searchEditText.setOnFocusChangeListener { _, hasFocus ->
-            showHistoryFlag = SearchUiLogic.shouldShowHistory(
+            showHistoryFlag = shouldShowHistory(
                 hasFocus = hasFocus,
                 queryText = searchEditText.text,
-                historyIsEmpty = interactor.getHistory().isEmpty()
+                historyIsEmpty = historyInteractor.getHistory().isEmpty()
             )
             updateHistoryVisibility(showHistoryFlag)
             if (showHistoryFlag) {
-                renderHistory(interactor.getHistory())
+                renderHistory(historyInteractor.getHistory())
             }
         }
 
         clearButton.setOnClickListener {
             searchHandler.removeCallbacksAndMessages(null)
             searchRunnable = null
-            currentCall?.cancel()
-            requestToken = 0L
 
             searchEditText.setText("")
             searchEditText.clearFocus()
@@ -327,6 +307,14 @@ class SearchActivity : AppCompatActivity() {
     private fun renderHistory(list: List<Track>) {
         historyAdapter.setItems(list)
         if (list.isEmpty()) historySection.visibility = View.GONE
+    }
+
+    private fun shouldShowHistory(
+        hasFocus: Boolean,
+        queryText: CharSequence?,
+        historyIsEmpty: Boolean
+    ): Boolean {
+        return hasFocus && (queryText.isNullOrEmpty()) && !historyIsEmpty
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
