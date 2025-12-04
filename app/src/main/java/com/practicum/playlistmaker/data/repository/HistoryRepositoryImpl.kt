@@ -1,20 +1,23 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.data.repository
 
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.practicum.playlistmaker.domain.repository.HistoryRepository
+import com.practicum.playlistmaker.domain.models.Track
 
-class SearchHistory(
+class HistoryRepositoryImpl(
     context: Context
-) {
+) : HistoryRepository {
+
     private val prefs: SharedPreferences =
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     private val gson = Gson()
     private val listType = object : TypeToken<ArrayList<Track>>() {}.type
 
-    fun getHistory(): List<Track> {
+    override fun getHistory(): List<Track> {
         val json = prefs.getString(KEY_HISTORY, null) ?: return emptyList()
         return try {
             gson.fromJson<ArrayList<Track>>(json, listType) ?: emptyList()
@@ -23,18 +26,15 @@ class SearchHistory(
         }
     }
 
-    fun addTrack(track: Track) {
+    override fun addTrack(track: Track) {
         val list = ArrayList(getHistory())
-
 
         val existingIndex = list.indexOfFirst { it.trackId == track.trackId }
         if (existingIndex >= 0) {
             list.removeAt(existingIndex)
         }
 
-
         list.add(0, track)
-
 
         if (list.size > MAX_SIZE) {
             while (list.size > MAX_SIZE) {
@@ -45,7 +45,7 @@ class SearchHistory(
         save(list)
     }
 
-    fun clear() {
+    override fun clearHistory() {
         prefs.edit().remove(KEY_HISTORY).apply()
     }
 
