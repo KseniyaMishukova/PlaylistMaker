@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.presentation.adapter
+package com.practicum.playlistmaker.presentation.search
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
