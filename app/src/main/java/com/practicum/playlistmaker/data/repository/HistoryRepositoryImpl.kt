@@ -1,16 +1,16 @@
 package com.practicum.playlistmaker.data.repository
 
 import android.content.SharedPreferences
-import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.domain.repository.HistoryRepository
 import com.practicum.playlistmaker.domain.models.Track
+import com.google.gson.Gson
 
 class HistoryRepositoryImpl(
-    private val prefs: SharedPreferences
+    private val prefs: SharedPreferences,
+    private val gson: Gson
 ) : HistoryRepository {
 
-    private val gson = Gson()
     private val listType = object : TypeToken<ArrayList<Track>>() {}.type
 
     override fun getHistory(): List<Track> {

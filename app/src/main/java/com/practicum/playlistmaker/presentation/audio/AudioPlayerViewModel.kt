@@ -1,6 +1,5 @@
 package com.practicum.playlistmaker.presentation.audio
 
-
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
@@ -12,7 +11,6 @@ import java.util.concurrent.TimeUnit
 
 class AudioPlayerViewModel : ViewModel() {
 
-
     private var mediaPlayer: MediaPlayer? = null
     private var playerState: PlayerState = PlayerState.IDLE
     private var startOnPrepared: Boolean = false
@@ -21,7 +19,9 @@ class AudioPlayerViewModel : ViewModel() {
     private val _isPlaying = MutableLiveData<Boolean>(false)
     val isPlaying: LiveData<Boolean> = _isPlaying
 
-    private val _progress = MutableLiveData<String>("00:00")
+    private val _progress = MutableLiveData<String>().apply {
+        value = formatMsToMmSs(0L)
+    }
     val progress: LiveData<String> = _progress
 
     private val progressHandler = Handler(Looper.getMainLooper())
@@ -39,7 +39,7 @@ class AudioPlayerViewModel : ViewModel() {
     fun init(track: Track) {
         if (this.track != null) return
         this.track = track
-        _progress.value = "00:00"
+        _progress.value = formatMsToMmSs(0L)
         preparePlayer()
     }
 
@@ -92,7 +92,7 @@ class AudioPlayerViewModel : ViewModel() {
                 setOnCompletionListener {
                     playerState = PlayerState.COMPLETED
                     stopProgressUpdates()
-                    _progress.postValue("00:00")
+                    _progress.postValue(formatMsToMmSs(0L))
                     _isPlaying.postValue(false)
                 }
                 setOnErrorListener { _, _, _ ->
@@ -139,7 +139,7 @@ class AudioPlayerViewModel : ViewModel() {
 
     private fun seekToStart() {
         mediaPlayer?.seekTo(0)
-        _progress.postValue("00:00")
+        _progress.postValue(formatMsToMmSs(0L))
     }
 
     private fun releasePlayer() {

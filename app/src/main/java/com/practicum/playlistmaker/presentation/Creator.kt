@@ -23,6 +23,7 @@ import com.practicum.playlistmaker.domain.usecase.SettingsInteractorImpl
 import com.practicum.playlistmaker.domain.repository.HistoryRepository
 import com.practicum.playlistmaker.domain.repository.SearchRepository
 import com.practicum.playlistmaker.domain.repository.SettingsRepository
+import com.google.gson.Gson
 
 object Creator {
 
@@ -40,7 +41,7 @@ object Creator {
     private fun provideHistoryRepository(context: Context): HistoryRepository {
         val prefs: SharedPreferences =
             context.getSharedPreferences(HistoryRepositoryImpl.PREFS_NAME, Context.MODE_PRIVATE)
-        return HistoryRepositoryImpl(prefs)
+        return HistoryRepositoryImpl(prefs, Gson())
     }
 
     private fun provideSettingsRepository(context: Context): SettingsRepository {

@@ -9,15 +9,6 @@ import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.domain.usecase.HistoryInteractor
 import com.practicum.playlistmaker.domain.usecase.SearchInteractor
 
-sealed class SearchScreenState {
-    object Idle : SearchScreenState()
-    object Loading : SearchScreenState()
-    data class History(val tracks: List<Track>) : SearchScreenState()
-    data class Content(val tracks: List<Track>) : SearchScreenState()
-    object Empty : SearchScreenState()
-    object Error : SearchScreenState()
-}
-
 class SearchViewModel(
     private val searchInteractor: SearchInteractor,
     private val historyInteractor: HistoryInteractor
@@ -110,8 +101,8 @@ class SearchViewModel(
                 } else {
                     _state.postValue(SearchScreenState.Content(tracks))
                 }
-            }.onFailure {
-                _state.postValue(SearchScreenState.Error)
+            }.onFailure { error ->
+                _state.postValue(SearchScreenState.Error(error.message.orEmpty()))
             }
         }
     }

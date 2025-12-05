@@ -16,6 +16,8 @@
      <color name="search_field_dark">#2C2D31</color>
      <color name="yp_black">#1A1B22</color>
 
+    <color name="icon_settings_tint">#AEAFB4</color>
+
      <color name="search_text_light">#1A1B22</color>
      <color name="search_text_dark">#FFFFFF</color>
      <color name="search_hint_light">#AEAFB4</color>
