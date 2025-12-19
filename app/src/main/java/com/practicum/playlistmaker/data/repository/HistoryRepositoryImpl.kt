@@ -1,20 +1,16 @@
 package com.practicum.playlistmaker.data.repository
 
-import android.content.Context
 import android.content.SharedPreferences
-import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.domain.repository.HistoryRepository
 import com.practicum.playlistmaker.domain.models.Track
+import com.google.gson.Gson
 
 class HistoryRepositoryImpl(
-    context: Context
+    private val prefs: SharedPreferences,
+    private val gson: Gson
 ) : HistoryRepository {
 
-    private val prefs: SharedPreferences =
-        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-
-    private val gson = Gson()
     private val listType = object : TypeToken<ArrayList<Track>>() {}.type
 
     override fun getHistory(): List<Track> {
@@ -55,7 +51,7 @@ class HistoryRepositoryImpl(
     }
 
     companion object {
-        private const val PREFS_NAME = "playlistmaker_prefs"
+        const val PREFS_NAME = "playlistmaker_prefs"
         private const val KEY_HISTORY = "search_history"
         private const val MAX_SIZE = 10
     }

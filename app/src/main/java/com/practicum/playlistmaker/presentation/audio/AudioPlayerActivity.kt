@@ -1,9 +1,6 @@
 package com.practicum.playlistmaker.presentation.audio
 
-import android.media.MediaPlayer
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -11,40 +8,25 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.domain.models.Track
-import java.util.concurrent.TimeUnit
+import com.practicum.playlistmaker.presentation.Creator
 
 class AudioPlayerActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_TRACK = "extra_track"
-        private const val PROGRESS_UPDATE_INTERVAL_MS = 500L
     }
 
     private var track: Track? = null
 
-    private var mediaPlayer: MediaPlayer? = null
-    private enum class PlayerState { IDLE, PREPARING, PREPARED, PLAYING, PAUSED, COMPLETED, ERROR }
-    private var playerState: PlayerState = PlayerState.IDLE
-    private var startOnPrepared: Boolean = false
-
     private lateinit var tvProgress: TextView
     private lateinit var ivPlayPause: ImageView
 
-    private val progressHandler = Handler(Looper.getMainLooper())
-    private val progressRunnable = object : Runnable {
-        override fun run() {
-            val mp = mediaPlayer
-            if (mp != null && playerState == PlayerState.PLAYING) {
-                val posMs = mp.currentPosition.coerceAtLeast(0)
-                tvProgress.text = formatMsToMmSs(posMs.toLong())
-                progressHandler.postDelayed(this, PROGRESS_UPDATE_INTERVAL_MS)
-            }
-        }
-    }
+    private lateinit var viewModel: AudioPlayerViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,8 +36,7 @@ class AudioPlayerActivity : AppCompatActivity() {
 
         onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                stopProgressUpdates()
-                releasePlayer()
+                viewModel.onViewStopped()
                 finish()
             }
         })
@@ -67,51 +48,33 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
 
         findViewById<ImageView>(R.id.back_button).setOnClickListener {
-            stopAndFinish()
+            viewModel.onViewStopped()
+            finish()
         }
 
         tvProgress = findViewById(R.id.tvProgress)
         ivPlayPause = findViewById(R.id.ivPlayPause)
 
-        findViewById<View>(R.id.btnPlay).setOnClickListener {
-            when (playerState) {
-                PlayerState.PLAYING -> pausePlayback()
-                PlayerState.PAUSED, PlayerState.PREPARED -> startPlayback()
-                PlayerState.COMPLETED -> {
-                    seekToStart()
-                    startPlayback()
-                }
-                PlayerState.IDLE -> preparePlayerAndPlay()
-                PlayerState.PREPARING, PlayerState.ERROR -> { }
-            }
-        }
+        viewModel = ViewModelProvider(
+            this,
+            Creator.provideAudioPlayerViewModelFactory()
+        ).get(AudioPlayerViewModel::class.java)
 
         track = intent?.getSerializableExtra(EXTRA_TRACK) as? Track
         bindTrack()
 
-        preparePlayer()
-        setProgressText(0L)
-        updatePlayButton(isPlaying = false)
+        track?.let { viewModel.init(it) }
+
+        findViewById<View>(R.id.btnPlay).setOnClickListener {
+            viewModel.onPlayPauseClicked()
+        }
+
+        observeViewModel()
     }
 
     override fun onPause() {
         super.onPause()
-
-        if (playerState == PlayerState.PLAYING) {
-            pausePlayback()
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        stopProgressUpdates()
-        releasePlayer()
-    }
-
-    private fun stopAndFinish() {
-        stopProgressUpdates()
-        releasePlayer()
-        finish()
+        viewModel.onViewPaused()
     }
 
     private fun bindTrack() {
@@ -164,122 +127,13 @@ class AudioPlayerActivity : AppCompatActivity() {
             .into(ivCover)
     }
 
-    private fun preparePlayer() {
-        val url = track?.previewUrl.orEmpty()
-        if (url.isEmpty()) {
-            playerState = PlayerState.ERROR
-            return
+    private fun observeViewModel() {
+        viewModel.isPlaying.observe(this) { playing ->
+            ivPlayPause.setImageResource(if (playing) R.drawable.ic_pause else R.drawable.ic_play)
         }
-        releasePlayer()
-        startOnPrepared = false
-        mediaPlayer = MediaPlayer().apply {
-            try {
-                setDataSource(url)
-                setOnPreparedListener {
-                    playerState = PlayerState.PREPARED
-                    updatePlayButton(isPlaying = false)
-                    if (startOnPrepared) {
-                        startOnPrepared = false
-                        startPlayback()
-                    }
-                }
-                setOnCompletionListener {
-                    playerState = PlayerState.COMPLETED
-                    stopProgressUpdates()
-                    setProgressText(0L)
-                    updatePlayButton(isPlaying = false)
-                }
-                setOnErrorListener { _, _, _ ->
-                    playerState = PlayerState.ERROR
-                    stopProgressUpdates()
-                    updatePlayButton(isPlaying = false)
-                    true
-                }
-                playerState = PlayerState.PREPARING
-                prepareAsync()
-            } catch (_: Exception) {
-                playerState = PlayerState.ERROR
-            }
+
+        viewModel.progress.observe(this) { text ->
+            tvProgress.text = text
         }
-    }
-
-    private fun preparePlayerAndPlay() {
-        when (playerState) {
-            PlayerState.IDLE, PlayerState.ERROR -> {
-                startOnPrepared = true
-                preparePlayer()
-            }
-            PlayerState.PREPARED -> startPlayback()
-            PlayerState.PREPARING -> {
-                startOnPrepared = true
-            }
-            PlayerState.PAUSED, PlayerState.COMPLETED -> startPlayback()
-            else -> { }
-        }
-    }
-
-    private fun startPlayback() {
-        val mp = mediaPlayer ?: return
-        try {
-            mp.start()
-            playerState = PlayerState.PLAYING
-            updatePlayButton(isPlaying = true)
-            startProgressUpdates()
-        } catch (_: Exception) {
-            playerState = PlayerState.ERROR
-            updatePlayButton(isPlaying = false)
-        }
-    }
-
-    private fun pausePlayback() {
-        val mp = mediaPlayer ?: return
-        if (playerState == PlayerState.PLAYING) {
-            try {
-                mp.pause()
-                playerState = PlayerState.PAUSED
-                updatePlayButton(isPlaying = false)
-            } catch (_: Exception) {
-                playerState = PlayerState.ERROR
-            } finally {
-                stopProgressUpdates()
-            }
-        }
-    }
-
-    private fun seekToStart() {
-        mediaPlayer?.seekTo(0)
-        setProgressText(0L)
-    }
-
-    private fun releasePlayer() {
-        try {
-            mediaPlayer?.release()
-        } catch (_: Exception) { }
-        mediaPlayer = null
-        playerState = PlayerState.IDLE
-    }
-
-    private fun startProgressUpdates() {
-        stopProgressUpdates()
-        progressHandler.post(progressRunnable)
-    }
-
-    private fun stopProgressUpdates() {
-        progressHandler.removeCallbacksAndMessages(null)
-    }
-
-    private fun setProgressText(ms: Long) {
-        tvProgress.text = formatMsToMmSs(ms)
-    }
-
-    private fun formatMsToMmSs(ms: Long): String {
-        val totalSeconds = TimeUnit.MILLISECONDS.toSeconds(ms)
-        val minutes = totalSeconds / 60
-        val seconds = totalSeconds % 60
-        return String.format("%02d:%02d", minutes, seconds)
-    }
-
-    private fun updatePlayButton(isPlaying: Boolean) {
-        ivPlayPause.setImageResource(if (isPlaying) R.drawable.ic_pause else R.drawable.ic_play)
     }
 }

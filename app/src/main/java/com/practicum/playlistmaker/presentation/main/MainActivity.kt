@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.button.MaterialButton
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.presentation.Creator
@@ -15,11 +16,18 @@ import com.practicum.playlistmaker.presentation.search.SearchActivity
 import com.practicum.playlistmaker.presentation.settings.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var viewModel: MainViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val settingsInteractor = Creator.provideSettingsInteractor(this)
-        val isDark = settingsInteractor.isDarkTheme()
+        viewModel = ViewModelProvider(
+            this,
+            Creator.provideMainViewModelFactory(this)
+        ).get(MainViewModel::class.java)
+
+        val isDark = viewModel.isDarkTheme()
         AppCompatDelegate.setDefaultNightMode(
             if (isDark) AppCompatDelegate.MODE_NIGHT_YES
             else AppCompatDelegate.MODE_NIGHT_NO

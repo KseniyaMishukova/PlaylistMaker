@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.presentation.settings
 
+
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
@@ -10,12 +11,16 @@ import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textview.MaterialTextView
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.presentation.Creator
 
 class SettingsActivity : AppCompatActivity() {
+
+    private lateinit var viewModel: SettingsViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -34,6 +39,11 @@ class SettingsActivity : AppCompatActivity() {
         findViewById<ImageView>(R.id.back_button).setOnClickListener {
             finish()
         }
+
+        viewModel = ViewModelProvider(
+            this,
+            Creator.provideSettingsViewModelFactory(this)
+        ).get(SettingsViewModel::class.java)
 
         setupDarkThemeSwitch()
 
@@ -72,12 +82,14 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun setupDarkThemeSwitch() {
         val switchDarkTheme = findViewById<SwitchMaterial>(R.id.switch_dark_theme)
-        val settingsInteractor = Creator.provideSettingsInteractor(this)
 
-        switchDarkTheme.isChecked = settingsInteractor.isDarkTheme()
+        val isDark = viewModel.isDarkTheme()
+        if (switchDarkTheme.isChecked != isDark) {
+            switchDarkTheme.isChecked = isDark
+        }
 
         switchDarkTheme.setOnCheckedChangeListener { _, isChecked ->
-            settingsInteractor.setDarkTheme(isChecked)
+            viewModel.setDarkTheme(isChecked)
             AppCompatDelegate.setDefaultNightMode(
                 if (isChecked) AppCompatDelegate.MODE_NIGHT_YES
                 else AppCompatDelegate.MODE_NIGHT_NO
