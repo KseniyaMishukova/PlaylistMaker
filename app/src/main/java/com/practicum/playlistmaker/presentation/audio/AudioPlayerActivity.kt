@@ -8,12 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.presentation.Creator
+
 
 class AudioPlayerActivity : AppCompatActivity() {
 
@@ -26,7 +26,7 @@ class AudioPlayerActivity : AppCompatActivity() {
     private lateinit var tvProgress: TextView
     private lateinit var ivPlayPause: ImageView
 
-    private lateinit var viewModel: AudioPlayerViewModel
+    private val viewModel: AudioPlayerViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,10 +55,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         tvProgress = findViewById(R.id.tvProgress)
         ivPlayPause = findViewById(R.id.ivPlayPause)
 
-        viewModel = ViewModelProvider(
-            this,
-            Creator.provideAudioPlayerViewModelFactory()
-        ).get(AudioPlayerViewModel::class.java)
 
         track = intent?.getSerializableExtra(EXTRA_TRACK) as? Track
         bindTrack()

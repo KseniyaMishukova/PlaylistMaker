@@ -19,12 +19,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.presentation.Creator
 import com.practicum.playlistmaker.presentation.audio.AudioPlayerActivity
-
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
@@ -54,7 +52,7 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var progressBar: View
 
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel: SearchViewModel by viewModel()
 
     private val clickHandler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
@@ -72,10 +70,6 @@ class SearchActivity : AppCompatActivity() {
             insets
         }
 
-        viewModel = ViewModelProvider(
-            this,
-            Creator.provideSearchViewModelFactory(this)
-        ).get(SearchViewModel::class.java)
 
         progressBar = findViewById(R.id.progressBar)
 
