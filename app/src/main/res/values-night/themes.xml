@@ -23,4 +23,11 @@
          <item name="android:statusBarColor">@color/yp_black</item>
          <item name="android:windowBackground">@color/yp_black</item>
      </style>
+
+    <style name="Theme.PlaylistMaker.MediaLibrary" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorSurface">@color/yp_black</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="android:statusBarColor">@color/yp_black</item>
+        <item name="android:windowBackground">@color/yp_black</item>
+    </style>
  </resources>

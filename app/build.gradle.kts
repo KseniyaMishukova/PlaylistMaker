@@ -52,6 +52,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    implementation(libs.material)
     implementation("io.insert-koin:koin-android:3.3.0")
-
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
 }

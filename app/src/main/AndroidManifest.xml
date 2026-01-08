@@ -26,7 +26,8 @@
             android:name=".presentation.search.SearchActivity"
             android:theme="@style/Theme.PlaylistMaker.Search" />
 
-        <activity android:name=".presentation.media.MediaLibraryActivity" />
+        <activity android:name=".presentation.media.MediaLibraryActivity"
+            android:theme="@style/Theme.PlaylistMaker.MediaLibrary" />
 
         <activity
             android:name=".presentation.settings.SettingsActivity"
