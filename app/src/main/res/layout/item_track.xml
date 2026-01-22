@@ -36,7 +36,7 @@
         style="@style/YsRegularMeta"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/track_artist_height"
-        
+
         android:maxLines="1"
         android:ellipsize="end"
         android:gravity="top"

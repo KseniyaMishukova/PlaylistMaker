@@ -1,48 +1,42 @@
 package com.practicum.playlistmaker.presentation.settings
 
-
 import android.content.Intent
 import android.os.Bundle
-import android.widget.ImageView
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.widget.Toolbar
 import androidx.core.net.toUri
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textview.MaterialTextView
 import com.practicum.playlistmaker.R
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsFragment : Fragment() {
+
+    companion object {
+        fun newInstance(): SettingsFragment {
+            return SettingsFragment()
+        }
+    }
 
     private val viewModel: SettingsViewModel by viewModel()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_settings, container, false)
+    }
 
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        setContentView(R.layout.activity_settings)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { view, insets ->
-            val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
-            view.setPadding(view.paddingLeft, statusBar.top, view.paddingRight, view.paddingBottom)
-            insets
-        }
+        setupDarkThemeSwitch(view)
 
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
-
-        findViewById<ImageView>(R.id.back_button).setOnClickListener {
-            finish()
-        }
-
-
-        setupDarkThemeSwitch()
-
-        findViewById<MaterialTextView>(R.id.contact_support_button).setOnClickListener {
+        view.findViewById<MaterialTextView>(R.id.contact_support_button).setOnClickListener {
             val email = getString(R.string.support_email)
             val subject = getString(R.string.email_subject)
             val body = getString(R.string.email_body)
@@ -56,7 +50,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(emailIntent)
         }
 
-        findViewById<MaterialTextView>(R.id.share_app_button).setOnClickListener {
+        view.findViewById<MaterialTextView>(R.id.share_app_button).setOnClickListener {
             val shareText = getString(
                 R.string.share_message_text,
                 getString(R.string.practicum_android_course_url)
@@ -68,15 +62,15 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(Intent.createChooser(sendIntent, getString(R.string.share_app)))
         }
 
-        findViewById<MaterialTextView>(R.id.user_agreement_button).setOnClickListener {
+        view.findViewById<MaterialTextView>(R.id.user_agreement_button).setOnClickListener {
             val url = getString(R.string.practicum_offer_url)
             val intent = Intent(Intent.ACTION_VIEW, url.toUri())
             startActivity(intent)
         }
     }
 
-    private fun setupDarkThemeSwitch() {
-        val switchDarkTheme = findViewById<SwitchMaterial>(R.id.switch_dark_theme)
+    private fun setupDarkThemeSwitch(view: View) {
+        val switchDarkTheme = view.findViewById<SwitchMaterial>(R.id.switch_dark_theme)
 
         val isDark = viewModel.isDarkTheme()
         if (switchDarkTheme.isChecked != isDark) {
