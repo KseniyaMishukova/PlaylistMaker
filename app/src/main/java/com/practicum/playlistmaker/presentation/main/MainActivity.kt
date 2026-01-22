@@ -1,17 +1,16 @@
 package com.practicum.playlistmaker.presentation.main
 
-import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.android.material.button.MaterialButton
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.presentation.media.MediaLibraryActivity
-import com.practicum.playlistmaker.presentation.search.SearchActivity
-import com.practicum.playlistmaker.presentation.settings.SettingsActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
@@ -32,27 +31,61 @@ class MainActivity : AppCompatActivity() {
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { view, insets ->
             val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
             view.setPadding(view.paddingLeft, statusBar.top, view.paddingRight, view.paddingBottom)
+
+            val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+            val divider = findViewById<View>(R.id.rectangle_8)
+            if (ime.bottom > 0) {
+                bottomNavigationView.visibility = View.GONE
+                divider?.visibility = View.GONE
+            } else {
+                val navHostFragment = supportFragmentManager
+                    .findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
+                val navController = navHostFragment?.navController
+                navController?.let {
+                    when (it.currentDestination?.id) {
+                        R.id.audioPlayerFragment -> {
+                            bottomNavigationView.visibility = View.GONE
+                            divider?.visibility = View.GONE
+                        }
+
+                        else -> {
+                            bottomNavigationView.visibility = View.VISIBLE
+                            divider?.visibility = View.VISIBLE
+                        }
+                    }
+                }
+
+            }
+
             insets
         }
 
-        val searchCard = findViewById<MaterialButton>(R.id.card_search)
-        val mediaCard = findViewById<MaterialButton>(R.id.card_media)
-        val settingsCard = findViewById<MaterialButton>(R.id.card_settings)
+        setupNavigation()
+    }
 
-        searchCard.setOnClickListener {
-            val intent = Intent(this, SearchActivity::class.java)
-            startActivity(intent)
-        }
+    private fun setupNavigation() {
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
 
-        mediaCard.setOnClickListener {
-            val intent = Intent(this, MediaLibraryActivity::class.java)
-            startActivity(intent)
-        }
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigationView.setupWithNavController(navController)
 
-        settingsCard.setOnClickListener {
-            val intent = Intent(this, SettingsActivity::class.java)
-            startActivity(intent)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+            val divider = findViewById<View>(R.id.rectangle_8)
+            when (destination.id) {
+                R.id.audioPlayerFragment -> {
+                    bottomNav.visibility = View.GONE
+                    divider?.visibility = View.GONE
+                }
+                else -> {
+                    bottomNav.visibility = View.VISIBLE
+                    divider?.visibility = View.VISIBLE
+                }
+            }
         }
     }
-}
+    }
