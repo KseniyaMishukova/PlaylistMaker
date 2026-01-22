@@ -30,7 +30,7 @@
         app:iconSize="21dp"
         app:iconTint="@color/text_black"
         app:iconGravity="textStart"
-        app:iconPadding="@dimen/text_margin_start"
+        app:iconPadding="8dp"
         android:insetLeft="0dp"
         android:insetTop="0dp"
         android:insetRight="0dp"
