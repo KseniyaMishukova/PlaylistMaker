@@ -7,9 +7,7 @@ import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.domain.usecase.HistoryInteractor
 import com.practicum.playlistmaker.domain.usecase.SearchInteractor
 import kotlinx.coroutines.*
-
 import androidx.lifecycle.viewModelScope
-
 
 class SearchViewModel(
     private val searchInteractor: SearchInteractor,
@@ -79,7 +77,7 @@ class SearchViewModel(
         }
         if (query == lastQuery && !isLoading) return
         
-        searchJob = CoroutineScope(Dispatchers.Main).launch {
+        searchJob = viewModelScope.launch {
             delay(SEARCH_DEBOUNCE_DELAY)
             performSearch(query)
         }

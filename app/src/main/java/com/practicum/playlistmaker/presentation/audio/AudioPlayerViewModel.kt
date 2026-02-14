@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker.domain.models.Track
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.*
+import androidx.lifecycle.viewModelScope
 
 class AudioPlayerViewModel : ViewModel() {
 
@@ -143,7 +144,7 @@ class AudioPlayerViewModel : ViewModel() {
 
     private fun startProgressUpdates() {
         stopProgressUpdates()
-        progressJob = CoroutineScope(Dispatchers.Main).launch {
+        progressJob = viewModelScope.launch {
             while (playerState == PlayerState.PLAYING) {
                 val mp = mediaPlayer
                 if (mp != null) {
