@@ -1,13 +1,12 @@
 package com.practicum.playlistmaker.presentation.audio
 
 import android.media.MediaPlayer
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker.domain.models.Track
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.*
 
 class AudioPlayerViewModel : ViewModel() {
 
@@ -24,17 +23,7 @@ class AudioPlayerViewModel : ViewModel() {
     }
     val progress: LiveData<String> = _progress
 
-    private val progressHandler = Handler(Looper.getMainLooper())
-    private val progressRunnable = object : Runnable {
-        override fun run() {
-            val mp = mediaPlayer
-            if (mp != null && playerState == PlayerState.PLAYING) {
-                val posMs = mp.currentPosition.coerceAtLeast(0)
-                _progress.postValue(formatMsToMmSs(posMs.toLong()))
-                progressHandler.postDelayed(this, PROGRESS_UPDATE_INTERVAL_MS)
-            }
-        }
-    }
+    private var progressJob: Job? = null
 
     fun init(track: Track) {
         if (this.track != null) return
@@ -154,11 +143,32 @@ class AudioPlayerViewModel : ViewModel() {
 
     private fun startProgressUpdates() {
         stopProgressUpdates()
-        progressHandler.post(progressRunnable)
+        progressJob = CoroutineScope(Dispatchers.Main).launch {
+            while (playerState == PlayerState.PLAYING) {
+                val mp = mediaPlayer
+                if (mp != null) {
+                    val posMs = mp.currentPosition.coerceAtLeast(0)
+                    _progress.postValue(formatMsToMmSs(posMs.toLong()))
+                }
+                delay(PROGRESS_UPDATE_INTERVAL_MS)
+            }
+
+            if (playerState == PlayerState.COMPLETED) {
+                _progress.postValue(formatMsToMmSs(0L))
+            } else if (playerState != PlayerState.PLAYING) {
+
+                val mp = mediaPlayer
+                if (mp != null) {
+                    val posMs = mp.currentPosition.coerceAtLeast(0)
+                    _progress.postValue(formatMsToMmSs(posMs.toLong()))
+                }
+            }
+        }
     }
 
     private fun stopProgressUpdates() {
-        progressHandler.removeCallbacksAndMessages(null)
+        progressJob?.cancel()
+        progressJob = null
     }
 
     private fun formatMsToMmSs(ms: Long): String {
@@ -175,6 +185,6 @@ class AudioPlayerViewModel : ViewModel() {
     }
 
     companion object {
-        private const val PROGRESS_UPDATE_INTERVAL_MS = 500L
+        private const val PROGRESS_UPDATE_INTERVAL_MS = 300L
     }
 }

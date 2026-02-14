@@ -2,8 +2,6 @@ package com.practicum.playlistmaker.presentation.search
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -23,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.domain.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlinx.coroutines.*
 
 class SearchFragment : Fragment() {
 
@@ -55,7 +54,7 @@ class SearchFragment : Fragment() {
 
     private val viewModel: SearchViewModel by viewModel()
 
-    private val clickHandler = Handler(Looper.getMainLooper())
+    private var clickJob: Job? = null
     private var isClickAllowed = true
 
     private var searchText: String = ""
@@ -232,7 +231,10 @@ class SearchFragment : Fragment() {
         val allowed = isClickAllowed
         if (allowed) {
             isClickAllowed = false
-            clickHandler.postDelayed({ isClickAllowed = true }, 1000L)
+            clickJob = CoroutineScope(Dispatchers.Main).launch {
+                delay(1000L)
+                isClickAllowed = true
+            }
         }
         return allowed
     }
