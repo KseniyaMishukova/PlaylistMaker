@@ -1,38 +1,39 @@
 package com.practicum.playlistmaker.presentation.search
 
-import android.content.Intent
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.LinearLayoutManager
-import android.view.inputmethod.EditorInfo
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.presentation.audio.AudioPlayerActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
 
     companion object {
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
+        fun newInstance(): SearchFragment {
+            return SearchFragment()
+        }
     }
 
     private lateinit var searchEditText: EditText
     private lateinit var clearButton: ImageView
-    private lateinit var backButton: ImageView
 
     private lateinit var recycler: RecyclerView
     private lateinit var adapter: TrackAdapter
@@ -59,25 +60,24 @@ class SearchActivity : AppCompatActivity() {
 
     private var searchText: String = ""
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        setContentView(R.layout.activity_search)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_search, container, false)
+    }
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { view, insets ->
-            val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
-            view.setPadding(view.paddingLeft, statusBar.top, view.paddingRight, view.paddingBottom)
-            insets
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
+        progressBar = view.findViewById(R.id.progressBar)
 
-        progressBar = findViewById(R.id.progressBar)
-
-        historySection = findViewById(R.id.history_section)
-        historyTitle = findViewById(R.id.ys_medium_1)
-        clearHistoryBtn = findViewById(R.id.button1)
-        historyRecycler = findViewById(R.id.history_recycler)
-        historyRecycler.layoutManager = LinearLayoutManager(this)
+        historySection = view.findViewById(R.id.history_section)
+        historyTitle = view.findViewById(R.id.ys_medium_1)
+        clearHistoryBtn = view.findViewById(R.id.button1)
+        historyRecycler = view.findViewById(R.id.history_recycler)
+        historyRecycler.layoutManager = LinearLayoutManager(requireContext())
         historyAdapter = TrackAdapter(mutableListOf()) { track ->
             if (clickDebounce()) {
                 viewModel.onTrackClicked(track)
@@ -90,21 +90,21 @@ class SearchActivity : AppCompatActivity() {
             viewModel.onClearHistoryClicked()
         }
 
-        errorImage = findViewById(R.id.il_internet)
-        errorText = findViewById(R.id.tv_placeholder_error)
-        retryButton = findViewById(R.id.btn_retry)
+        errorImage = view.findViewById(R.id.il_internet)
+        errorText = view.findViewById(R.id.tv_placeholder_error)
+        retryButton = view.findViewById(R.id.btn_retry)
         retryButton.setOnClickListener {
             viewModel.onRetryClicked()
         }
 
-        initViews()
+        initViews(view)
         setupSearchLogic()
 
-        placeholderImage = findViewById(R.id.il_search)
-        placeholderText = findViewById(R.id.tv_placeholder_empty)
+        placeholderImage = view.findViewById(R.id.il_search)
+        placeholderText = view.findViewById(R.id.tv_placeholder_empty)
 
-        recycler = findViewById(R.id.rvTracks)
-        recycler.layoutManager = LinearLayoutManager(this)
+        recycler = view.findViewById(R.id.rvTracks)
+        recycler.layoutManager = LinearLayoutManager(requireContext())
         adapter = TrackAdapter(mutableListOf()) { track ->
             if (clickDebounce()) {
                 viewModel.onTrackClicked(track)
@@ -117,7 +117,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        viewModel.state.observe(this) { state ->
+        viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is SearchScreenState.Idle -> {
                     progressBar.visibility = View.GONE
@@ -193,11 +193,9 @@ class SearchActivity : AppCompatActivity() {
         placeholderText.visibility = View.GONE
     }
 
-    private fun initViews() {
-        searchEditText = findViewById(R.id.search_edit_text)
-        clearButton = findViewById(R.id.clear_button)
-        backButton = findViewById(R.id.back_button)
-        backButton.setOnClickListener { finish() }
+    private fun initViews(view: View) {
+        searchEditText = view.findViewById(R.id.search_edit_text)
+        clearButton = view.findViewById(R.id.clear_button)
     }
 
     private fun setupSearchLogic() {
@@ -225,7 +223,7 @@ class SearchActivity : AppCompatActivity() {
             searchEditText.setText("")
             searchEditText.clearFocus()
             searchText = ""
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(searchEditText.windowToken, 0)
         }
     }
@@ -234,17 +232,17 @@ class SearchActivity : AppCompatActivity() {
         val allowed = isClickAllowed
         if (allowed) {
             isClickAllowed = false
-            clickHandler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+            clickHandler.postDelayed({ isClickAllowed = true }, 1000L)
         }
         return allowed
     }
 
     private fun openPlayer(track: Track) {
-        startActivity(
-            Intent(this, AudioPlayerActivity::class.java).putExtra(
-                AudioPlayerActivity.EXTRA_TRACK,
-                track
-            )
+        findNavController().navigate(
+            R.id.audioPlayerFragment,
+            Bundle().apply {
+                putSerializable("arg_track", track)
+            }
         )
     }
 }

@@ -31,4 +31,8 @@
     <color name="player_artist">#FFFFFF</color>
     <color name="player_meta_value">#FFFFFF</color>
     <color name="player_meta_label">#AEAFB4</color>
+
+    <color name="yp_black">#1A1B22</color>
+    <color name="bottom_nav_divider">#80E6E8EB</color>
+    <color name="bottom_nav_background">#1A1B22</color>
  </resources>

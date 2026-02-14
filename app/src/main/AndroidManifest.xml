@@ -10,33 +10,21 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.PlaylistMaker.Main"
+        android:theme="@style/Theme.PlaylistMaker.MainActivity"
         tools:targetApi="31">
 
         <activity
             android:name=".presentation.main.MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.PlaylistMaker.MainActivity"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".presentation.search.SearchActivity"
-            android:theme="@style/Theme.PlaylistMaker.Search" />
 
-        <activity android:name=".presentation.media.MediaLibraryActivity"
-            android:theme="@style/Theme.PlaylistMaker.MediaLibrary" />
-
-        <activity
-            android:name=".presentation.settings.SettingsActivity"
-            android:theme="@style/Theme.PlaylistMaker.Settings" />
-
-        <activity
-            android:name=".presentation.audio.AudioPlayerActivity"
-            android:theme="@style/Theme.PlaylistMaker.Search"
-            android:exported="false" />
 
     </application>
 </manifest>

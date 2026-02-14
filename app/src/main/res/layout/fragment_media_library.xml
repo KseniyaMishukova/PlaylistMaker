@@ -14,26 +14,11 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="3dp"
             android:background="?attr/colorSurface"
-            app:contentInsetStart="60dp"
+            app:contentInsetStart="16dp"
             app:title="@string/media_library_title"
             app:titleTextAppearance="@style/SettingsTitleStyle"
             app:titleTextColor="?attr/colorOnSurface" />
-
-        <ImageView
-            android:id="@+id/back_button"
-            android:layout_width="@dimen/icon_size_settings"
-            android:layout_height="@dimen/icon_size_settings"
-            android:layout_gravity="start|center_vertical"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="-1dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:contentDescription="@string/back_button"
-            android:focusable="true"
-            android:src="@drawable/outline_arrow_back_24"
-            app:tint="?attr/colorOnSurface" />
 
     </FrameLayout>
 

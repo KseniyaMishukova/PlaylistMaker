@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
  <resources>
 
-     <style name="Theme.PlaylistMaker.Main" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-         <item name="colorPrimary">@color/yp_black</item>
-         <item name="colorPrimaryVariant">@color/yp_black</item>
-         <item name="colorOnPrimary">@color/white</item>
-         <item name="android:statusBarColor">@color/yp_black</item>
-         <item name="android:windowBackground">@color/yp_black</item>
-     </style>
+    <style name="Theme.PlaylistMaker.MainActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/yp_black</item>
+        <item name="colorPrimaryVariant">@color/yp_black</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSurface">@color/yp_black</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="android:statusBarColor">@color/yp_black</item>
+        <item name="android:windowBackground">@color/yp_black</item>
+    </style>
 
 
  <style name="Theme.PlaylistMaker.Settings" parent="Theme.MaterialComponents.DayNight.NoActionBar">
