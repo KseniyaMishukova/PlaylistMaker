@@ -5,12 +5,14 @@ import com.practicum.playlistmaker.data.network.ITunesApi
 import com.practicum.playlistmaker.data.utils.toDomain
 import com.practicum.playlistmaker.domain.repository.SearchRepository
 import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.data.db.FavoriteTracksDao
 import retrofit2.Response
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class SearchRepositoryImpl(
-    private val api: ITunesApi
+    private val api: ITunesApi,
+    private val favoriteTracksDao: FavoriteTracksDao
 ) : SearchRepository {
 
     override fun searchTracks(query: String): Flow<Result<List<Track>>> = flow {
@@ -25,5 +27,6 @@ class SearchRepositoryImpl(
         } catch (t: Throwable) {
             emit(Result.failure(t))
         }
+
     }
 }

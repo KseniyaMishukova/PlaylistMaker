@@ -64,6 +64,10 @@ class AudioPlayerFragment : Fragment() {
             viewModel.onPlayPauseClicked()
         }
 
+        view.findViewById<View>(R.id.ivLike)?.setOnClickListener {
+            viewModel.onFavoriteClicked()
+        }
+
         observeViewModel()
     }
 
@@ -134,6 +138,15 @@ class AudioPlayerFragment : Fragment() {
 
         viewModel.progress.observe(viewLifecycleOwner) { text ->
             tvProgress.text = text
+        }
+        
+        viewModel.isFavorite.observe(viewLifecycleOwner) { isFavorite ->
+            val heartImageRes = if (isFavorite) {
+                R.drawable.ic_like_love
+            } else {
+                R.drawable.ic_like
+            }
+            view?.findViewById<android.widget.ImageView>(R.id.ivLike)?.setImageResource(heartImageRes)
         }
     }
 }
