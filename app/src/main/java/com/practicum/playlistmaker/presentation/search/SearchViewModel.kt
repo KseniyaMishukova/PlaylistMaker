@@ -1,13 +1,13 @@
 package com.practicum.playlistmaker.presentation.search
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.domain.usecase.HistoryInteractor
 import com.practicum.playlistmaker.domain.usecase.SearchInteractor
+import kotlinx.coroutines.*
+import androidx.lifecycle.viewModelScope
 
 class SearchViewModel(
     private val searchInteractor: SearchInteractor,
@@ -18,8 +18,7 @@ class SearchViewModel(
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
-    private val handler = Handler(Looper.getMainLooper())
-    private var searchRunnable: Runnable? = null
+    private var searchJob: Job? = null
 
     private val _state = MutableLiveData<SearchScreenState>(SearchScreenState.Idle)
     val state: LiveData<SearchScreenState> = _state
@@ -77,14 +76,16 @@ class SearchViewModel(
             return
         }
         if (query == lastQuery && !isLoading) return
-        val runnable = Runnable { performSearch(query) }
-        searchRunnable = runnable
-        handler.postDelayed(runnable, SEARCH_DEBOUNCE_DELAY)
+        
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            performSearch(query)
+        }
     }
 
     private fun cancelDebounce() {
-        searchRunnable?.let { handler.removeCallbacks(it) }
-        searchRunnable = null
+        searchJob?.cancel()
+        searchJob = null
     }
 
     private fun performSearch(query: String) {
@@ -92,18 +93,21 @@ class SearchViewModel(
         lastQuery = query
         isLoading = true
         _state.value = SearchScreenState.Loading
-
-        searchInteractor.searchTracks(query) { result ->
-            isLoading = false
-            result.onSuccess { tracks ->
-                if (tracks.isEmpty()) {
-                    _state.postValue(SearchScreenState.Empty)
-                } else {
-                    _state.postValue(SearchScreenState.Content(tracks))
+        
+        viewModelScope.launch {
+            searchInteractor.searchTracks(query)
+                .collect { result ->
+                    isLoading = false
+                    result.onSuccess { tracks ->
+                        if (tracks.isEmpty()) {
+                            _state.postValue(SearchScreenState.Empty)
+                        } else {
+                            _state.postValue(SearchScreenState.Content(tracks))
+                        }
+                    }.onFailure { error ->
+                        _state.postValue(SearchScreenState.Error(error.message.orEmpty()))
+                    }
                 }
-            }.onFailure { error ->
-                _state.postValue(SearchScreenState.Error(error.message.orEmpty()))
-            }
         }
     }
 
