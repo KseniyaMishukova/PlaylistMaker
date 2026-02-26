@@ -4,14 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.domain.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class AudioPlayerFragment : Fragment() {
 
@@ -31,7 +30,9 @@ class AudioPlayerFragment : Fragment() {
     private lateinit var tvProgress: android.widget.TextView
     private lateinit var ivPlayPause: android.widget.ImageView
 
-    private val viewModel: AudioPlayerViewModel by viewModel()
+    private val viewModel: AudioPlayerViewModel by viewModel {
+        parametersOf(requireNotNull(track) { "Track is required for AudioPlayer" })
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +59,6 @@ class AudioPlayerFragment : Fragment() {
         }
 
         bindTrack(view)
-        track?.let { viewModel.init(it) }
 
         view.findViewById<View>(R.id.btnPlay).setOnClickListener {
             viewModel.onPlayPauseClicked()
@@ -132,21 +132,14 @@ class AudioPlayerFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        viewModel.isPlaying.observe(viewLifecycleOwner) { playing ->
-            ivPlayPause.setImageResource(if (playing) R.drawable.ic_pause else R.drawable.ic_play)
-        }
-
-        viewModel.progress.observe(viewLifecycleOwner) { text ->
-            tvProgress.text = text
-        }
-        
-        viewModel.isFavorite.observe(viewLifecycleOwner) { isFavorite ->
-            val heartImageRes = if (isFavorite) {
-                R.drawable.ic_like_love
-            } else {
-                R.drawable.ic_like
-            }
-            view?.findViewById<android.widget.ImageView>(R.id.ivLike)?.setImageResource(heartImageRes)
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            ivPlayPause.setImageResource(
+                if (state.isPlaying) R.drawable.ic_pause else R.drawable.ic_play
+            )
+            tvProgress.text = state.progress
+            view?.findViewById<android.widget.ImageView>(R.id.ivLike)?.setImageResource(
+                if (state.isFavorite) R.drawable.ic_like_love else R.drawable.ic_like
+            )
         }
     }
 }

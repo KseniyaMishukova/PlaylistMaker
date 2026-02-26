@@ -3,6 +3,8 @@ package com.practicum.playlistmaker.di
 import android.content.Context
 import androidx.room.Room
 import com.practicum.playlistmaker.data.db.FavoritesDatabase
+import com.practicum.playlistmaker.data.player.MediaPlayerFactory
+import com.practicum.playlistmaker.data.player.MediaPlayerFactoryImpl
 import com.google.gson.Gson
 import com.practicum.playlistmaker.data.network.ITunesApi
 import com.practicum.playlistmaker.data.repository.HistoryRepositoryImpl
@@ -41,4 +43,6 @@ val dataModule = module {
     single<ITunesApi> {
         get<Retrofit>().create(ITunesApi::class.java)
     }
+
+    single<MediaPlayerFactory> { MediaPlayerFactoryImpl() }
 }

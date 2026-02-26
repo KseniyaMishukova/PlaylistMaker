@@ -19,7 +19,10 @@ class SearchRepositoryImpl(
         try {
             val response = api.search(query)
             if (response.isSuccessful) {
-                val tracks = response.body()?.results?.mapNotNull { it.toDomain() }.orEmpty()
+                val favoriteIds = favoriteTracksDao.getFavoriteTrackIds().toSet()
+                val tracks = response.body()?.results?.mapNotNull { it.toDomain() }?.map { track ->
+                    track.apply { isFavorite = favoriteIds.contains(trackId.toInt()) }
+                }.orEmpty()
                 emit(Result.success(tracks))
             } else {
                 emit(Result.failure(Exception("Response error: ${response.code()}")))
@@ -27,6 +30,5 @@ class SearchRepositoryImpl(
         } catch (t: Throwable) {
             emit(Result.failure(t))
         }
-
     }
 }
