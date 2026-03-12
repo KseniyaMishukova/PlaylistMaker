@@ -1,40 +1,46 @@
 package com.practicum.playlistmaker.presentation.audio
 
 import android.media.MediaPlayer
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.practicum.playlistmaker.data.player.MediaPlayerFactory
 import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.domain.usecase.FavoritesInteractor
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.*
 import androidx.lifecycle.viewModelScope
 
-class AudioPlayerViewModel : ViewModel() {
+class AudioPlayerViewModel(
+    private val track: Track,
+    private val favoritesInteractor: FavoritesInteractor,
+    private val mediaPlayerFactory: MediaPlayerFactory
+) : ViewModel() {
 
     private var mediaPlayer: MediaPlayer? = null
-    private var playerState: PlayerState = PlayerState.IDLE
     private var startOnPrepared: Boolean = false
-    private var track: Track? = null
 
-    private val _isPlaying = MutableLiveData<Boolean>(false)
-    val isPlaying: LiveData<Boolean> = _isPlaying
-
-    private val _progress = MutableLiveData<String>().apply {
-        value = formatMsToMmSs(0L)
-    }
-    val progress: LiveData<String> = _progress
+    private var currentState = AudioPlayerScreenState(
+        playerState = PlayerState.IDLE,
+        progress = formatMsToMmSs(0L),
+        isFavorite = false
+    )
+    private val _state = MutableLiveData(currentState)
+    val state: LiveData<AudioPlayerScreenState> = _state
 
     private var progressJob: Job? = null
 
-    fun init(track: Track) {
-        if (this.track != null) return
-        this.track = track
-        _progress.value = formatMsToMmSs(0L)
+    init {
+        viewModelScope.launch {
+            val isFavorite = favoritesInteractor.isFavorite(track.trackId)
+            updateState(progress = formatMsToMmSs(0L), isFavorite = isFavorite)
+        }
         preparePlayer()
     }
 
     fun onPlayPauseClicked() {
-        when (playerState) {
+        when (currentState.playerState) {
             PlayerState.PLAYING -> pausePlayback()
             PlayerState.PAUSED, PlayerState.PREPARED -> startPlayback()
             PlayerState.COMPLETED -> {
@@ -49,8 +55,21 @@ class AudioPlayerViewModel : ViewModel() {
         }
     }
 
+    fun onFavoriteClicked() {
+        viewModelScope.launch {
+            val newValue = !track.isFavorite
+            if (newValue) {
+                favoritesInteractor.addTrack(track)
+            } else {
+                favoritesInteractor.removeTrack(track)
+            }
+            track.isFavorite = newValue
+            updateState(isFavorite = newValue)
+        }
+    }
+
     fun onViewPaused() {
-        if (playerState == PlayerState.PLAYING) {
+        if (currentState.playerState == PlayerState.PLAYING) {
             pausePlayback()
         }
     }
@@ -63,38 +82,34 @@ class AudioPlayerViewModel : ViewModel() {
     private fun preparePlayer() {
         val url = track?.previewUrl.orEmpty()
         if (url.isEmpty()) {
-            playerState = PlayerState.ERROR
+            updateState(playerState = PlayerState.ERROR)
             return
         }
         releasePlayer()
         startOnPrepared = false
-        mediaPlayer = MediaPlayer().apply {
+        mediaPlayer = mediaPlayerFactory.create().apply {
             try {
                 setDataSource(url)
                 setOnPreparedListener {
-                    playerState = PlayerState.PREPARED
-                    _isPlaying.postValue(false)
+                    updateState(playerState = PlayerState.PREPARED)
                     if (startOnPrepared) {
                         startOnPrepared = false
                         startPlayback()
                     }
                 }
                 setOnCompletionListener {
-                    playerState = PlayerState.COMPLETED
                     stopProgressUpdates()
-                    _progress.postValue(formatMsToMmSs(0L))
-                    _isPlaying.postValue(false)
+                    updateState(playerState = PlayerState.COMPLETED, progress = formatMsToMmSs(0L))
                 }
                 setOnErrorListener { _, _, _ ->
-                    playerState = PlayerState.ERROR
                     stopProgressUpdates()
-                    _isPlaying.postValue(false)
+                    updateState(playerState = PlayerState.ERROR)
                     true
                 }
-                playerState = PlayerState.PREPARING
+                updateState(playerState = PlayerState.PREPARING)
                 prepareAsync()
             } catch (_: Exception) {
-                playerState = PlayerState.ERROR
+                updateState(playerState = PlayerState.ERROR)
             }
         }
     }
@@ -103,24 +118,21 @@ class AudioPlayerViewModel : ViewModel() {
         val mp = mediaPlayer ?: return
         try {
             mp.start()
-            playerState = PlayerState.PLAYING
-            _isPlaying.postValue(true)
+            updateState(playerState = PlayerState.PLAYING)
             startProgressUpdates()
         } catch (_: Exception) {
-            playerState = PlayerState.ERROR
-            _isPlaying.postValue(false)
+            updateState(playerState = PlayerState.ERROR)
         }
     }
 
     private fun pausePlayback() {
         val mp = mediaPlayer ?: return
-        if (playerState == PlayerState.PLAYING) {
+        if (currentState.playerState == PlayerState.PLAYING) {
             try {
                 mp.pause()
-                playerState = PlayerState.PAUSED
-                _isPlaying.postValue(false)
+                updateState(playerState = PlayerState.PAUSED)
             } catch (_: Exception) {
-                playerState = PlayerState.ERROR
+                updateState(playerState = PlayerState.ERROR)
             } finally {
                 stopProgressUpdates()
             }
@@ -129,7 +141,7 @@ class AudioPlayerViewModel : ViewModel() {
 
     private fun seekToStart() {
         mediaPlayer?.seekTo(0)
-        _progress.postValue(formatMsToMmSs(0L))
+        updateState(progress = formatMsToMmSs(0L))
     }
 
     private fun releasePlayer() {
@@ -138,30 +150,28 @@ class AudioPlayerViewModel : ViewModel() {
         } catch (_: Exception) {
         }
         mediaPlayer = null
-        playerState = PlayerState.IDLE
-        _isPlaying.postValue(false)
+        updateState(playerState = PlayerState.IDLE)
     }
 
     private fun startProgressUpdates() {
         stopProgressUpdates()
         progressJob = viewModelScope.launch {
-            while (playerState == PlayerState.PLAYING) {
+            while (currentState.playerState == PlayerState.PLAYING) {
                 val mp = mediaPlayer
                 if (mp != null) {
                     val posMs = mp.currentPosition.coerceAtLeast(0)
-                    _progress.postValue(formatMsToMmSs(posMs.toLong()))
+                    updateState(progress = formatMsToMmSs(posMs.toLong()))
                 }
                 delay(PROGRESS_UPDATE_INTERVAL_MS)
             }
 
-            if (playerState == PlayerState.COMPLETED) {
-                _progress.postValue(formatMsToMmSs(0L))
-            } else if (playerState != PlayerState.PLAYING) {
-
+            if (currentState.playerState == PlayerState.COMPLETED) {
+                updateState(progress = formatMsToMmSs(0L))
+            } else if (currentState.playerState != PlayerState.PLAYING) {
                 val mp = mediaPlayer
                 if (mp != null) {
                     val posMs = mp.currentPosition.coerceAtLeast(0)
-                    _progress.postValue(formatMsToMmSs(posMs.toLong()))
+                    updateState(progress = formatMsToMmSs(posMs.toLong()))
                 }
             }
         }
@@ -170,6 +180,23 @@ class AudioPlayerViewModel : ViewModel() {
     private fun stopProgressUpdates() {
         progressJob?.cancel()
         progressJob = null
+    }
+
+    private fun updateState(
+        playerState: PlayerState? = null,
+        progress: String? = null,
+        isFavorite: Boolean? = null
+    ) {
+        currentState = currentState.copy(
+            playerState = playerState ?: currentState.playerState,
+            progress = progress ?: currentState.progress,
+            isFavorite = isFavorite ?: currentState.isFavorite
+        )
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            _state.value = currentState
+        } else {
+            _state.postValue(currentState)
+        }
     }
 
     private fun formatMsToMmSs(ms: Long): String {

@@ -43,6 +43,7 @@ class TrackAdapter(
                 .centerCrop()
                 .transform(RoundedCorners(r))
                 .into(ivCover)
+
         }
     }
 

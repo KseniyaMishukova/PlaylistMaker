@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GigaCodeAgentSettings">
+    <option name="autoApprovedCommands">
+      <list>
+        <Execute>
+          <option name="pattern" value="git diff app/src/main/java/com/practicum/playlistmaker/di/DataModule.kt" />
+        </Execute>
+        <Execute>
+          <option name="pattern" value="git diff app/src/main/java/com/practicum/playlistmaker/data/repository/FavoritesRepositoryImpl.kt" />
+        </Execute>
+      </list>
+    </option>
+  </component>
+</project>
