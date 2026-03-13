@@ -35,4 +35,21 @@
     <color name="yp_black">#1A1B22</color>
     <color name="bottom_nav_divider">#80E6E8EB</color>
     <color name="bottom_nav_background">#1A1B22</color>
+
+    <color name="bottomSheetBg">#1A1B22</color>
+    <color name="bottomSheetTitleColor">#FFFFFF</color>
+    <color name="bottomSheetButtonBg">#FFFFFF</color>
+    <color name="bottomSheetButtonText">#1A1B22</color>
+    <color name="playlistTracksCount">#FFFFFF</color>
+    <color name="playlist_text_color">#FFFFFF</color>
+    <color name="playlist_cover_border">#FFFFFF</color>
+
+    <color name="createPlaylistHeaderTitle">#FFFFFF</color>
+    <color name="createPlaylistBackArrow">#FFFFFF</color>
+    <color name="createPlaylistInputText">#FFFFFFFF</color>
+    <color name="createPlaylistInputHint">#FFFFFFFF</color>
+    <color name="createPlaylistInputBorder">#FFFFFFFF</color>
+    <color name="createPlaylistButtonText">#FFFFFF</color>
+    <color name="snackbar_background">#FFFFFF</color>
+    <color name="snackbar_text">#1A1B22</color>
  </resources>

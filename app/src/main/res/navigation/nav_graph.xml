@@ -9,7 +9,17 @@
         android:id="@+id/mediaLibraryFragment"
         android:name="com.practicum.playlistmaker.presentation.media.MediaLibraryFragment"
         android:label="Медиатека"
-        tools:layout="@layout/fragment_media_library" />
+        tools:layout="@layout/fragment_media_library">
+        <action
+            android:id="@+id/action_mediaLibrary_to_createPlaylist"
+            app:destination="@id/createPlaylistFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createPlaylistFragment"
+        android:name="com.practicum.playlistmaker.presentation.create_playlist.CreatePlaylistFragment"
+        android:label="@string/create_playlist_title"
+        tools:layout="@layout/fragment_create_playlist" />
 
     <fragment
         android:id="@+id/searchFragment"
@@ -27,6 +37,10 @@
         android:id="@+id/audioPlayerFragment"
         android:name="com.practicum.playlistmaker.presentation.audio.AudioPlayerFragment"
         android:label="Аудиоплеер"
-        tools:layout="@layout/fragment_audio_player" />
+        tools:layout="@layout/fragment_audio_player">
+        <action
+            android:id="@+id/action_audioPlayer_to_createPlaylist"
+            app:destination="@id/createPlaylistFragment" />
+    </fragment>
 
 </navigation>
