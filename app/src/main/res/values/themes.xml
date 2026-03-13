@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
- <resources>
-
+<resources>
     <style name="Theme.PlaylistMaker.MainActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryVariant">@color/white</item>
@@ -11,21 +10,20 @@
         <item name="android:windowBackground">@color/white</item>
     </style>
 
+    <style name="Theme.PlaylistMaker.Settings" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/text_black</item>
+        <item name="android:statusBarColor">@color/blue_background</item>
+        <item name="android:windowBackground">@color/white</item>
+    </style>
 
-     <style name="Theme.PlaylistMaker.Settings" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-         <item name="colorSurface">@color/white</item>
-         <item name="colorOnSurface">@color/text_black</item>
-         <item name="android:statusBarColor">@color/blue_background</item>
-         <item name="android:windowBackground">@color/white</item>
-     </style>
-
-     <style name="Theme.PlaylistMaker.Search" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-         <item name="colorSurface">@color/white</item>
-         <item name="colorOnSurface">@color/text_black</item>
-         <item name="android:statusBarColor">@color/blue_background</item>
-         <item name="android:windowBackground">@color/white</item>
-         <item name="colorControlActivated">@color/cursor_color</item>
-     </style>
+    <style name="Theme.PlaylistMaker.Search" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/text_black</item>
+        <item name="android:statusBarColor">@color/blue_background</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="colorControlActivated">@color/cursor_color</item>
+    </style>
 
     <style name="Theme.PlaylistMaker.MediaLibrary" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorSurface">@color/white</item>
@@ -33,4 +31,15 @@
         <item name="android:statusBarColor">@color/blue_background</item>
         <item name="android:windowBackground">@color/white</item>
     </style>
- </resources>
+
+    <style name="ThemeOverlay.FinishPlaylistDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorPrimary">@color/blue_background</item>
+        <item name="colorOnSurface">@color/yp_black</item>
+    </style>
+
+    <style name="ThemeOverlay.CreatePlaylistDark" parent="ThemeOverlay.MaterialComponents.Light">
+        <item name="hintTextColor">#1A1B22</item>
+        <item name="boxStrokeColor">@color/create_playlist_input_border</item>
+        <item name="android:textColorHint">#1A1B22</item>
+    </style>
+</resources>

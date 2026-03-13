@@ -3,11 +3,15 @@ package com.practicum.playlistmaker.di
 import com.practicum.playlistmaker.data.repository.FavoritesRepositoryImpl
 import com.practicum.playlistmaker.data.repository.SearchRepositoryImpl
 import com.practicum.playlistmaker.data.repository.HistoryRepositoryImpl
+import com.practicum.playlistmaker.domain.repository.PlaylistRepositoryImpl
 import com.practicum.playlistmaker.data.repository.SettingsRepositoryImpl
 import com.practicum.playlistmaker.domain.repository.FavoritesRepository
 import com.practicum.playlistmaker.domain.repository.SearchRepository
 import com.practicum.playlistmaker.domain.repository.HistoryRepository
+import com.practicum.playlistmaker.domain.repository.PlaylistRepository
 import com.practicum.playlistmaker.domain.repository.SettingsRepository
+import com.practicum.playlistmaker.domain.usecase.CreatePlaylistInteractor
+import com.practicum.playlistmaker.domain.usecase.CreatePlaylistInteractorImpl
 import com.practicum.playlistmaker.domain.usecase.FavoritesInteractor
 import com.practicum.playlistmaker.domain.usecase.FavoritesInteractorImpl
 import com.practicum.playlistmaker.domain.usecase.HistoryInteractor
@@ -51,5 +55,13 @@ val domainModule = module {
     
     single<SettingsRepository> {
         SettingsRepositoryImpl(get(named("settings_prefs")))
+    }
+
+    single<PlaylistRepository> {
+        PlaylistRepositoryImpl(get())
+    }
+
+    single<CreatePlaylistInteractor> {
+        CreatePlaylistInteractorImpl(get(), get())
     }
 }

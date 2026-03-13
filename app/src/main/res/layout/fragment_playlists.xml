@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="?attr/colorSurface">
 
     <RelativeLayout
         android:id="@+id/button"
         android:layout_width="133dp"
         android:layout_height="36dp"
-        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="30dp"
         android:background="@drawable/button_playlist"
         android:clickable="true"
@@ -23,30 +24,47 @@
             android:textAlignment="center" />
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/il_search_l"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="110dp"
-        android:clipToOutline="true"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/playlists_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="16dp"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="8dp"
+        android:clipToPadding="false"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/empty_state"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
         android:visibility="visible">
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/light_mode"
-            android:contentDescription="@null"/>
-    </RelativeLayout>
 
-    <TextView
-        android:id="@+id/some_id"
-        android:layout_width="312dp"
-        android:layout_height="46dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="245dp"
-        android:text="@string/empty_playlists"
-        android:textAppearance="@style/some_id"
-        android:textColor="?attr/colorOnSurface"
-        android:gravity="center_horizontal|top" />
+        <RelativeLayout
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="-220dp">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/light_mode"
+                android:contentDescription="@null" />
+        </RelativeLayout>
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/empty_text"
+            android:layout_width="312dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:text="@string/empty_playlists"
+            android:textAppearance="@style/some_id"
+            android:textColor="@color/playlist_text_color"
+            android:gravity="center" />
+    </LinearLayout>
+</LinearLayout>

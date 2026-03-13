@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
                 val navController = navHostFragment?.navController
                 navController?.let {
                     when (it.currentDestination?.id) {
-                        R.id.audioPlayerFragment -> {
+                        R.id.audioPlayerFragment, R.id.createPlaylistFragment -> {
                             bottomNavigationView.visibility = View.GONE
                             divider?.visibility = View.GONE
                         }
@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
             val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
             val divider = findViewById<View>(R.id.rectangle_8)
             when (destination.id) {
-                R.id.audioPlayerFragment -> {
+                R.id.audioPlayerFragment, R.id.createPlaylistFragment -> {
                     bottomNav.visibility = View.GONE
                     divider?.visibility = View.GONE
                 }
