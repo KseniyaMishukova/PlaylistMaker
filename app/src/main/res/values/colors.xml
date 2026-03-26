@@ -66,6 +66,12 @@
     <color name="playlistTracksCount">#AEAFB4</color>
     <color name="playlist_text_color">#1A1B22</color>
     <color name="playlist_cover_border">#E1E1E1</color>
+    <color name="playlist_detail_info_bg">#E6E8EB</color>
+    <color name="playlist_detail_track_item_foreground">#1A1B22</color>
+    <color name="playlist_detail_track_item_secondary">#AEAFB4</color>
+    <color name="playlist_detail_track_row_background">#FFFFFF</color>
+
+    <color name="playlist_menu_share_row_bg">@android:color/transparent</color>
 
     <color name="createPlaylistHeaderTitle">#1A1B22</color>
     <color name="createPlaylistBackArrow">#1A1B22</color>

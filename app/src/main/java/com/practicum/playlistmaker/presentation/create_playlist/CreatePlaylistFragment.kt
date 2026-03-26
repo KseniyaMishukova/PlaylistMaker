@@ -23,16 +23,17 @@ import android.widget.TextView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.presentation.main.MainActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class CreatePlaylistFragment : Fragment() {
+open class CreatePlaylistFragment : Fragment() {
 
-    private val viewModel: CreatePlaylistViewModel by viewModel()
+    protected open val editorViewModel: CreatePlaylistViewModel by viewModel()
 
     private val pickImageLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        viewModel.setCoverUri(uri)
+        editorViewModel.setCoverUri(uri)
     }
 
     override fun onCreateView(
@@ -57,7 +58,7 @@ class CreatePlaylistFragment : Fragment() {
 
     private fun setupToolbar(view: View) {
         view.findViewById<View>(R.id.back_button).setOnClickListener {
-            viewModel.onBackPressed()
+            editorViewModel.onBackPressed()
         }
     }
 
@@ -69,10 +70,10 @@ class CreatePlaylistFragment : Fragment() {
 
     private fun setupInputs(view: View) {
         view.findViewById<TextInputEditText>(R.id.name_input).doAfterTextChanged {
-            viewModel.setName(it?.toString() ?: "")
+            editorViewModel.setName(it?.toString() ?: "")
         }
         view.findViewById<TextInputEditText>(R.id.description_input).doAfterTextChanged {
-            viewModel.setDescription(it?.toString() ?: "")
+            editorViewModel.setDescription(it?.toString() ?: "")
         }
     }
 
@@ -118,7 +119,7 @@ class CreatePlaylistFragment : Fragment() {
 
     private fun setupCreateButton(view: View) {
         view.findViewById<android.widget.Button>(R.id.create_button).setOnClickListener {
-            viewModel.createPlaylist(coverUri = viewModel.state.value?.coverUri)
+            editorViewModel.submitPlaylist(coverUri = editorViewModel.state.value?.coverUri)
         }
     }
 
@@ -127,7 +128,7 @@ class CreatePlaylistFragment : Fragment() {
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    viewModel.onBackPressed()
+                    editorViewModel.onBackPressed()
                 }
             }
         )
@@ -136,7 +137,7 @@ class CreatePlaylistFragment : Fragment() {
     private fun observeState(view: View) {
         val nameInput = view.findViewById<TextInputEditText>(R.id.name_input)
         val descriptionInput = view.findViewById<TextInputEditText>(R.id.description_input)
-        viewModel.state.observe(viewLifecycleOwner) { state ->
+        editorViewModel.state.observe(viewLifecycleOwner) { state ->
             state ?: return@observe
             if (nameInput.text.isNullOrEmpty() && state.name.isNotEmpty()) nameInput.setText(state.name)
             if (descriptionInput.text.isNullOrEmpty() && state.description.isNotEmpty()) descriptionInput.setText(state.description)
@@ -147,11 +148,11 @@ class CreatePlaylistFragment : Fragment() {
             }
             when (val action = state.pendingAction) {
                 PendingAction.NavigateBack -> {
-                    viewModel.clearPendingAction()
+                    editorViewModel.clearPendingAction()
                     findNavController().navigateUp()
                 }
                 is PendingAction.PlaylistCreated -> {
-                    viewModel.clearPendingAction()
+                    editorViewModel.clearPendingAction()
                     showPlaylistCreatedToast(getString(R.string.playlist_created, action.playlistName))
                     findNavController().navigateUp()
                 }
@@ -188,18 +189,18 @@ class CreatePlaylistFragment : Fragment() {
     }
 
     private fun showBackDialog() {
-        viewModel.dismissBackDialog()
+        editorViewModel.dismissBackDialog()
         MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_FinishPlaylistDialog)
             .setTitle(R.string.finish_dialog_title)
             .setMessage(R.string.finish_dialog_message)
             .setPositiveButton(R.string.finish) { _, _ ->
-                viewModel.confirmBack()
+                editorViewModel.confirmBack()
             }
             .setNegativeButton(R.string.cancel) { dialog, _ ->
                 dialog.dismiss()
             }
             .setOnDismissListener {
-                viewModel.dismissBackDialog()
+                editorViewModel.dismissBackDialog()
             }
             .show()
     }
@@ -207,8 +208,6 @@ class CreatePlaylistFragment : Fragment() {
     private fun showPlaylistCreatedToast(message: String) {
         val activity = requireActivity()
         val content = activity.findViewById<ViewGroup>(android.R.id.content)
-        val bottomNav = activity.findViewById<View>(R.id.bottom_navigation)
-        val divider = activity.findViewById<View>(R.id.rectangle_8)
 
         val toast = LayoutInflater.from(requireContext()).inflate(R.layout.view_playlist_created_toast, content, false)
         toast.findViewById<TextView>(R.id.toast_text).text = message
@@ -217,18 +216,16 @@ class CreatePlaylistFragment : Fragment() {
             FrameLayout.LayoutParams.WRAP_CONTENT
         ).apply {
             gravity = Gravity.BOTTOM
-            bottomMargin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10f, resources.displayMetrics).toInt()
+            bottomMargin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30f, resources.displayMetrics).toInt()
         }
         content.addView(toast, params)
 
         toast.postDelayed({
-            bottomNav.visibility = View.GONE
-            divider.visibility = View.GONE
+            (activity as? MainActivity)?.syncBottomNavigationWithNavDestination()
         }, 100L)
         toast.postDelayed({
             content.removeView(toast)
-            bottomNav.visibility = View.VISIBLE
-            divider.visibility = View.VISIBLE
+            (activity as? MainActivity)?.syncBottomNavigationWithNavDestination()
         }, 2000L)
     }
 }

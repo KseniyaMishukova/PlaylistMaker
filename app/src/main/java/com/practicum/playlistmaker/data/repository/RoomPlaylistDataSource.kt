@@ -8,6 +8,7 @@ import com.practicum.playlistmaker.data.db.PlaylistTrackEntity
 import com.practicum.playlistmaker.data.db.PlaylistTracksDao
 import com.practicum.playlistmaker.domain.models.Playlist
 import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.data.utils.parseTrackTimeToMillis
 import com.practicum.playlistmaker.domain.repository.PlaylistDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -38,6 +39,7 @@ class RoomPlaylistDataSource(
         }
 
     override suspend fun insertPlaylistTrack(track: Track) {
+        val millis = if (track.trackTimeMillis > 0) track.trackTimeMillis else parseTrackTimeToMillis(track.trackTime)
         playlistTracksDao.addTrack(
             PlaylistTrackEntity(
                 trackId = track.trackId.toInt(),
@@ -50,6 +52,7 @@ class RoomPlaylistDataSource(
                 country = track.country,
                 trackTime = track.trackTime,
                 previewUrl = track.previewUrl,
+                trackTimeMillis = millis,
                 timestamp = System.currentTimeMillis()
             )
         )
@@ -70,6 +73,43 @@ class RoomPlaylistDataSource(
             trackCount = playlist.trackCount
         )
         playlistDao.update(entity)
+    }
+
+    override fun observePlaylistById(id: Long): Flow<Playlist?> =
+        playlistDao.getPlaylistByIdFlow(id).map { entity -> entity?.let(::mapEntity) }
+
+    override fun observeTracksByIds(trackIds: List<Long>): Flow<List<Track>> {
+        val idSet = trackIds.toSet()
+        return playlistTracksDao.getAllTracks().map { entities ->
+            entities.filter { it.trackId.toLong() in idSet }.map { mapPlaylistTrackToDomain(it) }
+        }
+    }
+
+    override suspend fun getAllPlaylistsSync(): List<Playlist> =
+        playlistDao.getAllPlaylistsOnce().map { mapEntity(it) }
+
+    override suspend fun deletePlaylistTrackRow(trackId: Long) {
+        playlistTracksDao.deleteByTrackId(trackId.toInt())
+    }
+
+    override suspend fun deletePlaylistRow(id: Long) {
+        playlistDao.deleteById(id)
+    }
+
+    private fun mapPlaylistTrackToDomain(entity: PlaylistTrackEntity): Track {
+        return Track(
+            trackId = entity.trackId.toLong(),
+            trackName = entity.trackName ?: "",
+            artistName = entity.artistName ?: "",
+            trackTime = entity.trackTime ?: "00:00",
+            artworkUrl100 = entity.artworkUrl100 ?: "",
+            collectionName = entity.collectionName,
+            releaseYear = entity.releaseDate,
+            primaryGenreName = entity.primaryGenreName ?: "",
+            country = entity.country ?: "",
+            previewUrl = entity.previewUrl ?: "",
+            trackTimeMillis = entity.trackTimeMillis
+        )
     }
 
     private fun mapEntity(entity: PlaylistEntity): Playlist {

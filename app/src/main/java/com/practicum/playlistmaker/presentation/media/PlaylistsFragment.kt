@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.presentation.playlist_detail.PlaylistDetailFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistsFragment : Fragment() {
@@ -34,10 +36,16 @@ class PlaylistsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         view.findViewById<View>(R.id.button).setOnClickListener {
-            findNavController().navigate(R.id.action_mediaLibrary_to_createPlaylist)
+            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
+                .navigate(R.id.action_mediaLibrary_to_createPlaylist)
         }
 
-        adapter = PlaylistAdapter()
+        adapter = PlaylistAdapter { playlist ->
+            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(
+                R.id.action_mediaLibrary_to_playlistDetail,
+                bundleOf(PlaylistDetailFragment.ARG_PLAYLIST_ID to playlist.id)
+            )
+        }
         val recycler = view.findViewById<RecyclerView>(R.id.playlists_recycler)
         recycler.layoutManager = GridLayoutManager(requireContext(), 2)
         recycler.adapter = adapter

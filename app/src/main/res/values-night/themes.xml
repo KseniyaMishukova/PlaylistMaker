@@ -38,6 +38,15 @@
         <item name="colorOnSurface">@color/white</item>
     </style>
 
+    <style name="ThemeOverlay.PlaylistDeleteTrackDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorPrimary">@color/blue_background</item>
+        <item name="colorSurface">#FFFFFFFF</item>
+        <item name="colorOnSurface">@color/yp_black</item>
+        <item name="android:colorBackground">#FFFFFFFF</item>
+        <item name="android:windowBackground">#FFFFFFFF</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/TextAppearance.PlaylistDeleteDialog.Message</item>
+    </style>
+
     <style name="ThemeOverlay.CreatePlaylistDark" parent="ThemeOverlay.MaterialComponents.Dark">
         <item name="hintTextColor">#FFFFFF</item>
         <item name="boxStrokeColor">#FFFFFF</item>

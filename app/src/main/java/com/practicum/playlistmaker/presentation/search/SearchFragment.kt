@@ -4,7 +4,9 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
@@ -12,16 +14,14 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.presentation.audio.AudioPlayerFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import kotlinx.coroutines.*
 
 class SearchFragment : Fragment() {
 
@@ -37,6 +37,7 @@ class SearchFragment : Fragment() {
     private lateinit var recycler: RecyclerView
     private lateinit var adapter: TrackAdapter
 
+    private lateinit var historyScroll: View
     private lateinit var historySection: View
     private lateinit var historyTitle: TextView
     private lateinit var clearHistoryBtn: View
@@ -54,9 +55,6 @@ class SearchFragment : Fragment() {
 
     private val viewModel: SearchViewModel by viewModel()
 
-    private var clickJob: Job? = null
-    private var isClickAllowed = true
-
     private var searchText: String = ""
 
     override fun onCreateView(
@@ -72,17 +70,13 @@ class SearchFragment : Fragment() {
 
         progressBar = view.findViewById(R.id.progressBar)
 
+        historyScroll = view.findViewById(R.id.history_scroll)
         historySection = view.findViewById(R.id.history_section)
         historyTitle = view.findViewById(R.id.ys_medium_1)
         clearHistoryBtn = view.findViewById(R.id.button1)
         historyRecycler = view.findViewById(R.id.history_recycler)
         historyRecycler.layoutManager = LinearLayoutManager(requireContext())
-        historyAdapter = TrackAdapter(mutableListOf()) { track ->
-            if (clickDebounce()) {
-                viewModel.onTrackClicked(track)
-                openPlayer(track)
-            }
-        }
+        historyAdapter = TrackAdapter(mutableListOf(), useRowClickListener = false)
         historyRecycler.adapter = historyAdapter
 
         clearHistoryBtn.setOnClickListener {
@@ -104,15 +98,47 @@ class SearchFragment : Fragment() {
 
         recycler = view.findViewById(R.id.rvTracks)
         recycler.layoutManager = LinearLayoutManager(requireContext())
-        adapter = TrackAdapter(mutableListOf()) { track ->
-            if (clickDebounce()) {
-                viewModel.onTrackClicked(track)
-                openPlayer(track)
-            }
-        }
+        adapter = TrackAdapter(mutableListOf(), useRowClickListener = false)
         recycler.adapter = adapter
 
+        attachTrackListOpensPlayer(historyRecycler, historyAdapter)
+        attachTrackListOpensPlayer(recycler, adapter)
+
         observeViewModel()
+    }
+
+    /**
+     * Стандартный itemView.setOnClickListener на эмуляторе с открытой IME часто не срабатывает.
+     * Один тап обрабатываем через GestureDetector + позиция строки; на DOWN снимаем фокус с поля поиска.
+     */
+    private fun attachTrackListOpensPlayer(list: RecyclerView, listAdapter: TrackAdapter) {
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        @Suppress("DEPRECATION")
+        val gestureDetector = GestureDetector(
+            requireContext(),
+            object : GestureDetector.SimpleOnGestureListener() {
+                override fun onSingleTapUp(e: MotionEvent): Boolean {
+                    val under = list.findChildViewUnder(e.x, e.y) ?: return false
+                    val row = list.findContainingItemView(under) ?: return false
+                    val pos = list.getChildAdapterPosition(row)
+                    if (pos == RecyclerView.NO_POSITION) return false
+                    val track = listAdapter.getTrackAt(pos) ?: return false
+                    viewModel.onTrackClicked(track)
+                    openPlayer(track)
+                    return true
+                }
+            }
+        )
+        list.addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
+            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                if (e.actionMasked == MotionEvent.ACTION_DOWN) {
+                    searchEditText.clearFocus()
+                    imm.hideSoftInputFromWindow(rv.windowToken, 0)
+                }
+                gestureDetector.onTouchEvent(e)
+                return false
+            }
+        })
     }
 
     private fun observeViewModel() {
@@ -121,6 +147,7 @@ class SearchFragment : Fragment() {
                 is SearchScreenState.Idle -> {
                     progressBar.visibility = View.GONE
                     recycler.visibility = View.GONE
+                    historyScroll.visibility = View.GONE
                     historySection.visibility = View.GONE
                     hidePlaceholders()
                     hideError()
@@ -128,12 +155,14 @@ class SearchFragment : Fragment() {
                 is SearchScreenState.Loading -> {
                     progressBar.visibility = View.VISIBLE
                     recycler.visibility = View.GONE
+                    historyScroll.visibility = View.GONE
                     historySection.visibility = View.GONE
                     hidePlaceholders()
                     hideError()
                 }
                 is SearchScreenState.History -> {
                     progressBar.visibility = View.GONE
+                    historyScroll.visibility = View.VISIBLE
                     historySection.visibility = View.VISIBLE
                     recycler.visibility = View.GONE
                     hidePlaceholders()
@@ -143,6 +172,7 @@ class SearchFragment : Fragment() {
                 is SearchScreenState.Content -> {
                     progressBar.visibility = View.GONE
                     recycler.visibility = View.VISIBLE
+                    historyScroll.visibility = View.GONE
                     historySection.visibility = View.GONE
                     hidePlaceholders()
                     hideError()
@@ -151,6 +181,7 @@ class SearchFragment : Fragment() {
                 is SearchScreenState.Empty -> {
                     progressBar.visibility = View.GONE
                     recycler.visibility = View.GONE
+                    historyScroll.visibility = View.GONE
                     historySection.visibility = View.GONE
                     showEmptyPlaceholder()
                     hideError()
@@ -158,6 +189,7 @@ class SearchFragment : Fragment() {
                 is SearchScreenState.Error -> {
                     progressBar.visibility = View.GONE
                     recycler.visibility = View.GONE
+                    historyScroll.visibility = View.GONE
                     historySection.visibility = View.GONE
                     hidePlaceholders()
                     showError()
@@ -227,24 +259,15 @@ class SearchFragment : Fragment() {
         }
     }
 
-    private fun clickDebounce(): Boolean {
-        val allowed = isClickAllowed
-        if (allowed) {
-            isClickAllowed = false
-            clickJob = CoroutineScope(Dispatchers.Main).launch {
-                delay(1000L)
-                isClickAllowed = true
-            }
-        }
-        return allowed
-    }
-
     private fun openPlayer(track: Track) {
-        findNavController().navigate(
-            R.id.audioPlayerFragment,
-            Bundle().apply {
-                putSerializable("arg_track", track)
-            }
-        )
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(requireView().windowToken, 0)
+        val args = Bundle().apply {
+            putSerializable(AudioPlayerFragment.ARG_TRACK, track)
+        }
+        if (!isAdded) return
+        val navHost =
+            requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navHost.navController.navigate(R.id.audioPlayerFragment, args)
     }
 }

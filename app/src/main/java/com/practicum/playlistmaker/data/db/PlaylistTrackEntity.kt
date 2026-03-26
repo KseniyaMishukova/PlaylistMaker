@@ -15,5 +15,6 @@ data class PlaylistTrackEntity(
     val country: String?,
     val trackTime: String?,
     val previewUrl: String?,
+    val trackTimeMillis: Long = 0L,
     val timestamp: Long = System.currentTimeMillis()
 )
