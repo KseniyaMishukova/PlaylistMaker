@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="?attr/colorSurface"
-    android:paddingBottom="25dp">
+    android:background="?attr/colorSurface">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:paddingBottom="25dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -78,7 +82,10 @@
             app:layout_constraintTop_toBottomOf="@id/tvArtist"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="68dp"
-            android:layout_marginStart="24dp">
+            android:layout_marginStart="24dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless">
 
             <ImageView
                 android:layout_width="51dp"
@@ -272,4 +279,79 @@
             android:layout_marginBottom="24dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.core.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
+
+    <View
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#99000000"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <LinearLayout
+        android:id="@+id/playlists_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/buttom_shee"
+        android:orientation="vertical"
+        app:behavior_fitToContents="false"
+        app:behavior_halfExpandedRatio="0.5"
+        app:behavior_hideable="true"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <View
+                android:id="@+id/rectangle_1"
+                android:layout_width="50dp"
+                android:layout_height="4dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/rectangle_1" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/add_to_playlist"
+                android:textAppearance="@style/BottomSheetTitle" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:id="@+id/bottom_sheet_new_playlist"
+                android:layout_width="135dp"
+                android:layout_height="36dp"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:text="@string/new_playlist"
+                android:textAppearance="@style/retry_labels"
+                android:textColor="@color/bottomSheetButtonText"
+                android:background="@drawable/bottom_sheet_button"
+                android:clickable="true"
+                android:focusable="true" />
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/playlists_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="24dp"
+            android:nestedScrollingEnabled="true" />
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

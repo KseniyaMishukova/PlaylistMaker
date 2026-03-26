@@ -6,15 +6,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.practicum.playlistmaker.data.player.MediaPlayerFactory
+import com.practicum.playlistmaker.domain.models.Playlist
 import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.domain.usecase.CreatePlaylistInteractor
 import com.practicum.playlistmaker.domain.usecase.FavoritesInteractor
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.first
 import androidx.lifecycle.viewModelScope
 
 class AudioPlayerViewModel(
     private val track: Track,
     private val favoritesInteractor: FavoritesInteractor,
+    private val createPlaylistInteractor: CreatePlaylistInteractor,
     private val mediaPlayerFactory: MediaPlayerFactory
 ) : ViewModel() {
 
@@ -77,6 +81,38 @@ class AudioPlayerViewModel(
     fun onViewStopped() {
         stopProgressUpdates()
         releasePlayer()
+    }
+
+    fun loadPlaylists() {
+        viewModelScope.launch {
+            val list = createPlaylistInteractor.getPlaylists().first()
+            updateState(playlists = list)
+        }
+    }
+
+    fun onPlaylistSelected(playlist: Playlist) {
+        if (track.trackId in playlist.trackIds) {
+            updateState(addToPlaylistResult = AddToPlaylistResult.AlreadyInPlaylist(playlist.name))
+            return
+        }
+        viewModelScope.launch {
+            createPlaylistInteractor.addTrackToPlaylist(playlist, track)
+            updateState(addToPlaylistResult = AddToPlaylistResult.Added(playlist.name))
+        }
+    }
+
+    fun onNewPlaylistClicked() {
+        updateState(navigateToCreatePlaylist = true)
+    }
+
+    fun clearAddToPlaylistResult() {
+        currentState = currentState.copy(addToPlaylistResult = null)
+        publishState()
+    }
+
+    fun clearNavigateToCreatePlaylist() {
+        currentState = currentState.copy(navigateToCreatePlaylist = false)
+        publishState()
     }
 
     private fun preparePlayer() {
@@ -185,13 +221,23 @@ class AudioPlayerViewModel(
     private fun updateState(
         playerState: PlayerState? = null,
         progress: String? = null,
-        isFavorite: Boolean? = null
+        isFavorite: Boolean? = null,
+        playlists: List<Playlist>? = null,
+        addToPlaylistResult: AddToPlaylistResult? = null,
+        navigateToCreatePlaylist: Boolean? = null
     ) {
         currentState = currentState.copy(
             playerState = playerState ?: currentState.playerState,
             progress = progress ?: currentState.progress,
-            isFavorite = isFavorite ?: currentState.isFavorite
+            isFavorite = isFavorite ?: currentState.isFavorite,
+            playlists = playlists ?: currentState.playlists,
+            addToPlaylistResult = addToPlaylistResult ?: currentState.addToPlaylistResult,
+            navigateToCreatePlaylist = navigateToCreatePlaylist ?: currentState.navigateToCreatePlaylist
         )
+        publishState()
+    }
+
+    private fun publishState() {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             _state.value = currentState
         } else {
@@ -215,4 +261,31 @@ class AudioPlayerViewModel(
     companion object {
         private const val PROGRESS_UPDATE_INTERVAL_MS = 300L
     }
+}
+
+enum class PlayerState {
+    IDLE,
+    PREPARING,
+    PREPARED,
+    PLAYING,
+    PAUSED,
+    COMPLETED,
+    ERROR
+}
+
+sealed class AddToPlaylistResult {
+    data class Added(val playlistName: String) : AddToPlaylistResult()
+    data class AlreadyInPlaylist(val playlistName: String) : AddToPlaylistResult()
+}
+
+data class AudioPlayerScreenState(
+    val playerState: PlayerState,
+    val progress: String,
+    val isFavorite: Boolean,
+    val playlists: List<Playlist> = emptyList(),
+    val addToPlaylistResult: AddToPlaylistResult? = null,
+    val navigateToCreatePlaylist: Boolean = false
+) {
+    val isPlaying: Boolean
+        get() = playerState == PlayerState.PLAYING
 }

@@ -4,6 +4,10 @@ import android.content.Context
 import androidx.room.Room
 import com.practicum.playlistmaker.data.db.FavoritesDatabase
 import com.practicum.playlistmaker.data.player.MediaPlayerFactory
+import com.practicum.playlistmaker.data.repository.ImageStorageImpl
+import com.practicum.playlistmaker.data.repository.RoomPlaylistDataSource
+import com.practicum.playlistmaker.domain.repository.ImageStorage
+import com.practicum.playlistmaker.domain.repository.PlaylistDataSource
 import com.practicum.playlistmaker.data.player.MediaPlayerFactoryImpl
 import com.google.gson.Gson
 import com.practicum.playlistmaker.data.network.ITunesApi
@@ -28,6 +32,8 @@ val dataModule = module {
     single { Gson() }
 
     single { get<FavoritesDatabase>().favoriteTracksDao() }
+    single { get<FavoritesDatabase>().playlistDao() }
+    single { get<FavoritesDatabase>().playlistTracksDao() }
 
     single(named("history_prefs")) { get<Context>().getSharedPreferences(HistoryRepositoryImpl.PREFS_NAME, Context.MODE_PRIVATE) }
 
@@ -45,4 +51,10 @@ val dataModule = module {
     }
 
     single<MediaPlayerFactory> { MediaPlayerFactoryImpl() }
+
+    single<ImageStorage> { ImageStorageImpl(get()) }
+
+    single<PlaylistDataSource> {
+        RoomPlaylistDataSource(get(), get(), get())
+    }
 }
