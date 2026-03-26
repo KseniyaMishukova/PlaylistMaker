@@ -26,6 +26,7 @@ fun TrackDto.toDomain(): Track? {
         releaseYear = year,
         primaryGenreName = primaryGenreName.orEmpty(),
         country = country.orEmpty(),
-        previewUrl = previewUrl.orEmpty()
+        previewUrl = previewUrl.orEmpty(),
+        trackTimeMillis = trackTimeMillis ?: 0L
     )
 }

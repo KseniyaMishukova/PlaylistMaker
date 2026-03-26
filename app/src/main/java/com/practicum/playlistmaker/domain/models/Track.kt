@@ -12,7 +12,8 @@ data class Track(
     val releaseYear: String?,
     val primaryGenreName: String,
     val country: String,
-    val previewUrl: String
+    val previewUrl: String,
+    val trackTimeMillis: Long = 0L
 ) : Serializable {
     
     var isFavorite: Boolean = false

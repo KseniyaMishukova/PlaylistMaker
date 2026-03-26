@@ -24,11 +24,11 @@ sealed class PendingAction {
     data class PlaylistCreated(val playlistName: String) : PendingAction()
 }
 
-class CreatePlaylistViewModel(
-    private val createPlaylistInteractor: CreatePlaylistInteractor
+open class CreatePlaylistViewModel(
+    protected val createPlaylistInteractor: CreatePlaylistInteractor
 ) : ViewModel() {
 
-    private val _state = MutableLiveData(CreatePlaylistState())
+    protected val _state = MutableLiveData(CreatePlaylistState())
     val state: LiveData<CreatePlaylistState> = _state
 
     fun setName(name: String) {
@@ -43,7 +43,7 @@ class CreatePlaylistViewModel(
         _state.value = _state.value?.copy(coverUri = uri)
     }
 
-    fun onBackPressed() {
+    open fun onBackPressed() {
         val current = _state.value ?: return
         if (current.hasUnsavedData) {
             _state.value = current.copy(showBackDialog = true)
@@ -60,7 +60,7 @@ class CreatePlaylistViewModel(
         _state.value = _state.value?.copy(showBackDialog = false, pendingAction = PendingAction.NavigateBack)
     }
 
-    fun createPlaylist(coverUri: Uri?) {
+    open fun submitPlaylist(coverUri: Uri?) {
         val current = _state.value ?: return
         if (!current.isCreateEnabled) return
 

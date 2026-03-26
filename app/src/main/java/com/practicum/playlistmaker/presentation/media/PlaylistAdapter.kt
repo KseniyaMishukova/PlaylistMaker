@@ -12,9 +12,11 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.domain.models.Playlist
+import com.practicum.playlistmaker.util.RussianPlurals
 
 class PlaylistAdapter(
-    private val items: MutableList<Playlist> = mutableListOf()
+    private val items: MutableList<Playlist> = mutableListOf(),
+    private val onItemClick: (Playlist) -> Unit = {}
 ) : RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder>() {
 
     fun setItems(newItems: List<Playlist>) {
@@ -39,7 +41,11 @@ class PlaylistAdapter(
                     if (position % 2 == 0) Gravity.TOP or Gravity.START else Gravity.TOP or Gravity.END
             }
             playlistName.text = item.name
-            tracksCount.text = itemView.context.getString(R.string.tracks_count, item.trackCount)
+            tracksCount.text = RussianPlurals.pluralRussian(
+                itemView.context,
+                R.plurals.playlist_detail_tracks,
+                item.trackCount
+            )
 
             if (!item.coverPath.isNullOrEmpty()) {
                 coverPlaceholder.visibility = View.GONE
@@ -63,7 +69,9 @@ class PlaylistAdapter(
     }
 
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
-        holder.bind(items[position], position)
+        val item = items[position]
+        holder.bind(item, position)
+        holder.itemView.setOnClickListener { onItemClick(item) }
     }
 
     override fun getItemCount(): Int = items.size
