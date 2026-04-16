@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.domain.models.Playlist
+import com.practicum.playlistmaker.util.RussianPlurals
 
 class PlaylistBottomSheetAdapter(
     private val items: MutableList<Playlist> = mutableListOf(),
@@ -30,7 +31,11 @@ class PlaylistBottomSheetAdapter(
 
         fun bind(item: Playlist) {
             playlistName.text = item.name
-            tracksCount.text = itemView.context.getString(R.string.tracks_count, item.trackCount)
+            tracksCount.text = RussianPlurals.pluralRussian(
+                itemView.context,
+                R.plurals.playlist_detail_tracks,
+                item.trackCount
+            )
 
             if (!item.coverPath.isNullOrEmpty()) {
                 coverPlaceholder.visibility = View.GONE

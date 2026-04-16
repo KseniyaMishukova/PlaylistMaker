@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.presentation.search
 
 import android.annotation.SuppressLint
+import androidx.annotation.LayoutRes
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +15,11 @@ import com.practicum.playlistmaker.domain.models.Track
 
 class TrackAdapter(
     private val items: MutableList<Track>,
-    private val onItemClick: (Track) -> Unit = {}
+    @LayoutRes private val itemLayoutRes: Int = R.layout.item_track,
+    private val onItemClick: (Track) -> Unit = {},
+    private val onItemLongClick: ((Track) -> Unit)? = null,
+
+    private val useRowClickListener: Boolean = true
 ) : RecyclerView.Adapter<TrackAdapter.TrackViewHolder>() {
 
     @SuppressLint("NotifyDataSetChanged")
@@ -23,6 +28,8 @@ class TrackAdapter(
         items.addAll(newItems)
         notifyDataSetChanged()
     }
+
+    fun getTrackAt(position: Int): Track? = items.getOrNull(position)
 
     class TrackViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val ivCover: ImageView = view.findViewById(R.id.ivCover)
@@ -36,26 +43,46 @@ class TrackAdapter(
             tvTime.text = item.trackTime
 
             val r = itemView.resources.getDimensionPixelSize(R.dimen.track_corner_radius)
-            Glide.with(itemView)
-                .load(item.artworkUrl100)
-                .placeholder(R.drawable.ic_zig)
-                .error(R.drawable.ic_zig)
-                .centerCrop()
-                .transform(RoundedCorners(r))
-                .into(ivCover)
+            val art = item.artworkUrl100?.trim().orEmpty()
+            if (art.isEmpty()) {
+                Glide.with(itemView).clear(ivCover)
+                ivCover.setImageResource(R.drawable.ic_zig)
+            } else {
+                Glide.with(itemView)
+                    .load(art)
+                    .placeholder(R.drawable.ic_zig)
+                    .error(R.drawable.ic_zig)
+                    .centerCrop()
+                    .transform(RoundedCorners(r))
+                    .into(ivCover)
+            }
 
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.item_track, parent, false)
+        val v = LayoutInflater.from(parent.context).inflate(itemLayoutRes, parent, false)
         return TrackViewHolder(v)
     }
 
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         val item = items[position]
         holder.bind(item)
-        holder.itemView.setOnClickListener { onItemClick(item) }
+        if (useRowClickListener) {
+            holder.itemView.setOnClickListener { onItemClick(item) }
+            holder.itemView.isClickable = true
+        } else {
+            holder.itemView.setOnClickListener(null)
+            holder.itemView.isClickable = false
+        }
+        if (onItemLongClick != null) {
+            holder.itemView.setOnLongClickListener {
+                onItemLongClick.invoke(item)
+                true
+            }
+        } else {
+            holder.itemView.setOnLongClickListener(null)
+        }
     }
 
     override fun getItemCount(): Int = items.size

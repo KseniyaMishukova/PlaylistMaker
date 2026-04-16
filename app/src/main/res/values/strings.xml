@@ -58,6 +58,8 @@
     <string name="empty_favorites">Ваша медиатека пуста</string>
 
     <string name="create_playlist_title">Создание плейлиста</string>
+    <string name="edit_playlist_title">Редактировать</string>
+    <string name="save_playlist_button">Сохранить</string>
     <string name="playlist_name">Название</string>
     <string name="playlist_name_hint">Название*</string>
     <string name="playlist_description">Описание</string>
@@ -67,8 +69,42 @@
     <string name="cancel">Отмена</string>
     <string name="finish">Завершить</string>
     <string name="playlist_created">Плейлист %1$s создан</string>
-    <string name="tracks_count">%d треков</string>
     <string name="added_to_playlist">Добавлено в плейлист %1$s</string>
     <string name="track_already_in_playlist">Трек уже добавлен в плейлист %1$s</string>
     <string name="add_to_playlist">Добавить в плейлист</string>
+
+    <string name="playlist_detail_title">Плейлист</string>
+    <string name="playlist_detail_share">Поделиться</string>
+    <string name="playlist_detail_menu">Меню</string>
+    <string name="playlist_tracks_list_placeholder">Список треков</string>
+    <plurals name="playlist_detail_minutes">
+        <item quantity="zero">%d минут</item>
+        <item quantity="one">%d минута</item>
+        <item quantity="few">%d минуты</item>
+        <item quantity="many">%d минут</item>
+        <item quantity="other">%d минут</item>
+    </plurals>
+    <plurals name="playlist_detail_tracks">
+        <item quantity="zero">%d треков</item>
+        <item quantity="one">%d трек</item>
+        <item quantity="few">%d трека</item>
+        <item quantity="many">%d треков</item>
+        <item quantity="other">%d треков</item>
+    </plurals>
+    <string name="best_songs_">Best songs 2021</string>
+
+    <string name="playlist_delete_track_title">Хотите удалить трек?</string>
+    <string name="playlist_delete_track_no">НЕТ</string>
+    <string name="playlist_delete_track_yes">ДА</string>
+
+    <string name="playlist_share_no_tracks">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="playlist_share_chooser_title">Поделиться плейлистом</string>
+    <string name="playlist_menu_share">Поделиться</string>
+    <string name="playlist_menu_edit">Редактировать информацию</string>
+    <string name="playlist_menu_delete">Удалить плейлист</string>
+    <string name="playlist_delete_playlist_title">Удалить плейлист</string>
+    <string name="playlist_delete_playlist_message">Вы уверены, что хотите удалить этот плейлист?</string>
+    <string name="playlist_delete_playlist_cancel">Отмена</string>
+    <string name="playlist_delete_playlist_confirm">Удалить</string>
+    <string name="playlist_detail_empty_tracks">В этом плейлисте нет треков</string>
  </resources>

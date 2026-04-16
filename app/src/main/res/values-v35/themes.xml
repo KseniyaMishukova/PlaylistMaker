@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- API 35+: иначе edge-to-edge игнорирует android:statusBarColor; см. Theme.PlaylistMaker.MainActivity в values/themes.xml -->
+<resources>
+    <style name="Theme.PlaylistMaker.MainActivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimaryVariant">@color/white</item>
+        <item name="colorOnPrimary">@color/text_black</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/text_black</item>
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+    </style>
+</resources>

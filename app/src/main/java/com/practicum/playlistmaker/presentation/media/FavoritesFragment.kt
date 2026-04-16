@@ -5,14 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.domain.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import com.practicum.playlistmaker.presentation.search.TrackAdapter
 
@@ -41,14 +38,17 @@ class FavoritesFragment : Fragment() {
 
         val recycler: RecyclerView = view.findViewById(R.id.rvFavorites)
         recycler.layoutManager = LinearLayoutManager(requireContext())
-        adapter = TrackAdapter(mutableListOf()) { track ->
-            findNavController().navigate(
-                R.id.audioPlayerFragment,
-                Bundle().apply {
-                    putSerializable("arg_track", track)
-                }
-            )
-        }
+        adapter = TrackAdapter(
+            mutableListOf(),
+            onItemClick = { track ->
+                findNavController().navigate(
+                    R.id.audioPlayerFragment,
+                    Bundle().apply {
+                        putSerializable("arg_track", track)
+                    }
+                )
+            }
+        )
         recycler.adapter = adapter
 
         viewModel.state.observe(viewLifecycleOwner) { state ->

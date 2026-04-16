@@ -100,6 +100,7 @@
         android:visibility="gone" />
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/history_scroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fillViewport="false">
@@ -129,7 +130,7 @@
                 android:id="@+id/history_recycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="true"
+                android:nestedScrollingEnabled="false"
                 android:overScrollMode="never"
                 android:paddingStart="0dp"
                 android:paddingEnd="0dp" />

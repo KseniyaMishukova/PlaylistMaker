@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.BundleCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -41,8 +42,14 @@ class AudioPlayerFragment : Fragment() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        track = arguments?.readTrackArg()
         super.onCreate(savedInstanceState)
-        track = arguments?.getSerializable(ARG_TRACK) as? Track
+    }
+
+    private fun Bundle?.readTrackArg(): Track? {
+        if (this == null) return null
+        classLoader = Track::class.java.classLoader
+        return BundleCompat.getSerializable(this, ARG_TRACK, Track::class.java)
     }
 
     override fun onCreateView(

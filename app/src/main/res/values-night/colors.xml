@@ -43,6 +43,12 @@
     <color name="playlistTracksCount">#FFFFFF</color>
     <color name="playlist_text_color">#FFFFFF</color>
     <color name="playlist_cover_border">#FFFFFF</color>
+    <color name="playlist_detail_info_bg">#E6E8EB</color>
+    <color name="playlist_detail_track_item_foreground">#FFFFFF</color>
+    <color name="playlist_detail_track_item_secondary">#FFFFFF</color>
+    <color name="playlist_detail_track_row_background">#1A1B22</color>
+
+    <color name="playlist_menu_share_row_bg">#1A1B22</color>
 
     <color name="createPlaylistHeaderTitle">#FFFFFF</color>
     <color name="createPlaylistBackArrow">#FFFFFF</color>

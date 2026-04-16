@@ -116,20 +116,20 @@ class AudioPlayerViewModel(
     }
 
     private fun preparePlayer() {
-        val url = track?.previewUrl.orEmpty()
+        val url = track.previewUrl
         if (url.isEmpty()) {
             updateState(playerState = PlayerState.ERROR)
             return
         }
-        releasePlayer()
+        val playWhenPrepared = startOnPrepared
         startOnPrepared = false
+        releasePlayer()
         mediaPlayer = mediaPlayerFactory.create().apply {
             try {
                 setDataSource(url)
                 setOnPreparedListener {
                     updateState(playerState = PlayerState.PREPARED)
-                    if (startOnPrepared) {
-                        startOnPrepared = false
+                    if (playWhenPrepared) {
                         startPlayback()
                     }
                 }

@@ -19,6 +19,7 @@
             android:id="@+id/panel_heade"
             android:layout_width="0dp"
             android:layout_height="56dp"
+            android:background="?attr/colorSurface"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
@@ -294,7 +295,8 @@
         android:id="@+id/playlists_bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/buttom_shee"
+        android:background="@drawable/bottom_sheet_bg"
+        android:clipToOutline="true"
         android:orientation="vertical"
         app:behavior_fitToContents="false"
         app:behavior_halfExpandedRatio="0.5"

@@ -10,4 +10,9 @@ interface PlaylistDataSource {
     suspend fun insertPlaylistTrack(track: Track): Unit
     suspend fun getPlaylistById(id: Long): Playlist?
     suspend fun updatePlaylist(playlist: Playlist): Unit
+    fun observePlaylistById(id: Long): Flow<Playlist?>
+    fun observeTracksByIds(trackIds: List<Long>): Flow<List<Track>>
+    suspend fun getAllPlaylistsSync(): List<Playlist>
+    suspend fun deletePlaylistTrackRow(trackId: Long)
+    suspend fun deletePlaylistRow(id: Long)
 }
