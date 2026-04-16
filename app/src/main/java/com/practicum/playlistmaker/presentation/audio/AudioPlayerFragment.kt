@@ -34,7 +34,7 @@ class AudioPlayerFragment : Fragment() {
 
     private var track: Track? = null
     private lateinit var tvProgress: android.widget.TextView
-    private lateinit var ivPlayPause: android.widget.ImageView
+    private lateinit var playbackButton: PlaybackButtonView
     private lateinit var playlistAdapter: PlaylistBottomSheetAdapter
 
     private val viewModel: AudioPlayerViewModel by viewModel {
@@ -64,7 +64,7 @@ class AudioPlayerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         tvProgress = view.findViewById(R.id.tvProgress)
-        ivPlayPause = view.findViewById(R.id.ivPlayPause)
+        playbackButton = view.findViewById(R.id.playbackButton)
 
         view.findViewById<android.widget.ImageView>(R.id.back_button).setOnClickListener {
             viewModel.onViewStopped()
@@ -73,7 +73,7 @@ class AudioPlayerFragment : Fragment() {
 
         bindTrack(view)
 
-        view.findViewById<View>(R.id.btnPlay).setOnClickListener {
+        playbackButton.setOnToggleListener {
             viewModel.onPlayPauseClicked()
         }
 
@@ -193,9 +193,7 @@ class AudioPlayerFragment : Fragment() {
     private fun observeViewModel() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             state ?: return@observe
-            ivPlayPause.setImageResource(
-                if (state.isPlaying) R.drawable.ic_pause else R.drawable.ic_play
-            )
+            playbackButton.setPlaying(state.isPlaying)
             tvProgress.text = state.progress
             view?.findViewById<android.widget.ImageView>(R.id.ivLike)?.setImageResource(
                 if (state.isFavorite) R.drawable.ic_like_love else R.drawable.ic_like
