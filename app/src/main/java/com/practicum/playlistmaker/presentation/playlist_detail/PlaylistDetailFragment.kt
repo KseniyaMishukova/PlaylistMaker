@@ -345,7 +345,9 @@ class PlaylistDetailFragment : Fragment() {
             R.dimen.playlist_bottom_sheet_peek_extra_placeholder
         }
         val extra = resources.getDimensionPixelSize(extraRes)
-        behavior.setPeekHeight((parentH / 4).coerceAtLeast(minPeek) + extra)
+        val offset = resources.getDimensionPixelSize(R.dimen.playlist_tracks_sheet_peek_offset)
+        val desired = (parentH / 4).coerceAtLeast(minPeek) + extra - offset
+        behavior.setPeekHeight(desired.coerceAtLeast(minPeek))
     }
 
 }
