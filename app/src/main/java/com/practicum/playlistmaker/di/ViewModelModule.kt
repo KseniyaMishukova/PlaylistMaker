@@ -21,7 +21,7 @@ val viewModelModule = module {
     viewModel { SearchViewModel(get(), get()) }
     viewModel { SettingsViewModel(get()) }
     viewModel { (track: com.practicum.playlistmaker.domain.models.Track) ->
-        AudioPlayerViewModel(track, get(), get(), get())
+        AudioPlayerViewModel(track, get(), get())
     }
     viewModel { FavoritesViewModel(get()) }
     viewModel { PlaylistsViewModel(get()) }

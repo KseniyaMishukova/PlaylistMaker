@@ -1,12 +1,24 @@
 package com.practicum.playlistmaker.presentation.audio
 
+import android.Manifest
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.OnBackPressedCallback
 import androidx.core.os.BundleCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -36,6 +48,42 @@ class AudioPlayerFragment : Fragment() {
     private lateinit var tvProgress: android.widget.TextView
     private lateinit var playbackButton: PlaybackButtonView
     private lateinit var playlistAdapter: PlaylistBottomSheetAdapter
+    private var isBound: Boolean = false
+    private var isPlayerScreenOpen: Boolean = false
+
+    private val appLifecycleObserver = object : DefaultLifecycleObserver {
+        override fun onStart(owner: LifecycleOwner) {
+            if (!isPlayerScreenOpen) return
+            viewModel.onAppForegrounded()
+        }
+
+        override fun onStop(owner: LifecycleOwner) {
+            if (!isPlayerScreenOpen) return
+            if (hasNotificationPermission()) {
+                viewModel.onAppBackgrounded()
+            } else {
+                requestNotificationPermissionIfNeeded()
+            }
+        }
+    }
+
+    private val notificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { }
+
+    private val connection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: android.os.IBinder?) {
+            val binder = service as? AudioPlayerService.PlayerBinder ?: return
+            val audioService = binder.getService()
+            isBound = true
+            viewModel.onServiceBound(audioService)
+            viewModel.onAppForegrounded()
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isBound = false
+        }
+    }
 
     private val viewModel: AudioPlayerViewModel by viewModel {
         parametersOf(requireNotNull(track) { "Track is required for AudioPlayer" })
@@ -44,6 +92,15 @@ class AudioPlayerFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         track = arguments?.readTrackArg()
         super.onCreate(savedInstanceState)
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    closePlayerScreen()
+                }
+            }
+        )
     }
 
     private fun Bundle?.readTrackArg(): Track? {
@@ -63,12 +120,15 @@ class AudioPlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        isPlayerScreenOpen = true
+        ProcessLifecycleOwner.get().lifecycle.addObserver(appLifecycleObserver)
+        requestNotificationPermissionIfNeeded()
+
         tvProgress = view.findViewById(R.id.tvProgress)
         playbackButton = view.findViewById(R.id.playbackButton)
 
         view.findViewById<android.widget.ImageView>(R.id.back_button).setOnClickListener {
-            viewModel.onViewStopped()
-            requireActivity().onBackPressedDispatcher.onBackPressed()
+            closePlayerScreen()
         }
 
         bindTrack(view)
@@ -84,16 +144,19 @@ class AudioPlayerFragment : Fragment() {
         setupAddToPlaylistButton(view)
         setupBottomSheet(view)
         observeViewModel()
+
+        bindToPlayerService()
     }
 
     override fun onPause() {
         super.onPause()
-        viewModel.onViewPaused()
     }
 
     override fun onDestroyView() {
+        isPlayerScreenOpen = false
+        ProcessLifecycleOwner.get().lifecycle.removeObserver(appLifecycleObserver)
         super.onDestroyView()
-        viewModel.onViewStopped()
+        unbindFromPlayerService()
     }
 
     private fun setupAddToPlaylistButton(view: View) {
@@ -222,5 +285,47 @@ class AudioPlayerFragment : Fragment() {
                 findNavController().navigate(R.id.action_audioPlayer_to_createPlaylist)
             }
         }
+    }
+
+    private fun bindToPlayerService() {
+        if (isBound) return
+        val t = track ?: return
+        val intent = Intent(requireContext(), AudioPlayerService::class.java).apply {
+            putExtra(AudioPlayerService.EXTRA_PREVIEW_URL, t.previewUrl)
+            putExtra(AudioPlayerService.EXTRA_ARTIST_NAME, t.artistName)
+            putExtra(AudioPlayerService.EXTRA_TRACK_NAME, t.trackName)
+        }
+        requireContext().bindService(intent, connection, Context.BIND_AUTO_CREATE)
+    }
+
+    private fun closePlayerScreen() {
+        viewModel.onScreenClosed()
+        unbindFromPlayerService()
+        if (isAdded) {
+            findNavController().popBackStack()
+        }
+    }
+
+    private fun unbindFromPlayerService() {
+        if (!isBound) return
+        isBound = false
+        try {
+            requireContext().unbindService(connection)
+        } catch (_: Exception) {
+        }
+    }
+
+    private fun requestNotificationPermissionIfNeeded() {
+        if (android.os.Build.VERSION.SDK_INT < 33) return
+        if (hasNotificationPermission()) return
+        notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+    }
+
+    private fun hasNotificationPermission(): Boolean {
+        if (android.os.Build.VERSION.SDK_INT < 33) return true
+        return ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
     }
 }

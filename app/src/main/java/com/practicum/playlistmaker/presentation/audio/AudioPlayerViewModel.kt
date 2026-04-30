@@ -1,11 +1,8 @@
 package com.practicum.playlistmaker.presentation.audio
 
-import android.media.MediaPlayer
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.practicum.playlistmaker.data.player.MediaPlayerFactory
 import com.practicum.playlistmaker.domain.models.Playlist
 import com.practicum.playlistmaker.domain.models.Track
 import com.practicum.playlistmaker.domain.usecase.CreatePlaylistInteractor
@@ -14,16 +11,18 @@ import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import android.os.Looper
 
 class AudioPlayerViewModel(
     private val track: Track,
     private val favoritesInteractor: FavoritesInteractor,
-    private val createPlaylistInteractor: CreatePlaylistInteractor,
-    private val mediaPlayerFactory: MediaPlayerFactory
+    private val createPlaylistInteractor: CreatePlaylistInteractor
 ) : ViewModel() {
 
-    private var mediaPlayer: MediaPlayer? = null
-    private var startOnPrepared: Boolean = false
+    private var playerController: AudioPlayerServiceController? = null
+    private var playerStateJob: Job? = null
 
     private var currentState = AudioPlayerScreenState(
         playerState = PlayerState.IDLE,
@@ -33,30 +32,20 @@ class AudioPlayerViewModel(
     private val _state = MutableLiveData(currentState)
     val state: LiveData<AudioPlayerScreenState> = _state
 
-    private var progressJob: Job? = null
-
     init {
         viewModelScope.launch {
             val isFavorite = favoritesInteractor.isFavorite(track.trackId)
             updateState(progress = formatMsToMmSs(0L), isFavorite = isFavorite)
         }
-        preparePlayer()
+    }
+
+    fun onServiceBound(controller: AudioPlayerServiceController) {
+        playerController = controller
+        observePlayerState(controller.stateFlow())
     }
 
     fun onPlayPauseClicked() {
-        when (currentState.playerState) {
-            PlayerState.PLAYING -> pausePlayback()
-            PlayerState.PAUSED, PlayerState.PREPARED -> startPlayback()
-            PlayerState.COMPLETED -> {
-                seekToStart()
-                startPlayback()
-            }
-            PlayerState.IDLE -> {
-                startOnPrepared = true
-                preparePlayer()
-            }
-            PlayerState.PREPARING, PlayerState.ERROR -> { }
-        }
+        playerController?.playPause()
     }
 
     fun onFavoriteClicked() {
@@ -72,15 +61,18 @@ class AudioPlayerViewModel(
         }
     }
 
-    fun onViewPaused() {
+    fun onScreenClosed() {
+        playerController?.stopAndRelease()
+    }
+
+    fun onAppBackgrounded() {
         if (currentState.playerState == PlayerState.PLAYING) {
-            pausePlayback()
+            playerController?.startForegroundNotification()
         }
     }
 
-    fun onViewStopped() {
-        stopProgressUpdates()
-        releasePlayer()
+    fun onAppForegrounded() {
+        playerController?.stopForegroundNotification()
     }
 
     fun loadPlaylists() {
@@ -115,107 +107,16 @@ class AudioPlayerViewModel(
         publishState()
     }
 
-    private fun preparePlayer() {
-        val url = track.previewUrl
-        if (url.isEmpty()) {
-            updateState(playerState = PlayerState.ERROR)
-            return
-        }
-        val playWhenPrepared = startOnPrepared
-        startOnPrepared = false
-        releasePlayer()
-        mediaPlayer = mediaPlayerFactory.create().apply {
-            try {
-                setDataSource(url)
-                setOnPreparedListener {
-                    updateState(playerState = PlayerState.PREPARED)
-                    if (playWhenPrepared) {
-                        startPlayback()
-                    }
-                }
-                setOnCompletionListener {
-                    stopProgressUpdates()
-                    updateState(playerState = PlayerState.COMPLETED, progress = formatMsToMmSs(0L))
-                }
-                setOnErrorListener { _, _, _ ->
-                    stopProgressUpdates()
-                    updateState(playerState = PlayerState.ERROR)
-                    true
-                }
-                updateState(playerState = PlayerState.PREPARING)
-                prepareAsync()
-            } catch (_: Exception) {
-                updateState(playerState = PlayerState.ERROR)
+    private fun observePlayerState(flow: StateFlow<AudioPlayerServiceState>) {
+        playerStateJob?.cancel()
+        playerStateJob = viewModelScope.launch {
+            flow.collectLatest { s ->
+                updateState(
+                    playerState = s.playerState,
+                    progress = s.progress
+                )
             }
         }
-    }
-
-    private fun startPlayback() {
-        val mp = mediaPlayer ?: return
-        try {
-            mp.start()
-            updateState(playerState = PlayerState.PLAYING)
-            startProgressUpdates()
-        } catch (_: Exception) {
-            updateState(playerState = PlayerState.ERROR)
-        }
-    }
-
-    private fun pausePlayback() {
-        val mp = mediaPlayer ?: return
-        if (currentState.playerState == PlayerState.PLAYING) {
-            try {
-                mp.pause()
-                updateState(playerState = PlayerState.PAUSED)
-            } catch (_: Exception) {
-                updateState(playerState = PlayerState.ERROR)
-            } finally {
-                stopProgressUpdates()
-            }
-        }
-    }
-
-    private fun seekToStart() {
-        mediaPlayer?.seekTo(0)
-        updateState(progress = formatMsToMmSs(0L))
-    }
-
-    private fun releasePlayer() {
-        try {
-            mediaPlayer?.release()
-        } catch (_: Exception) {
-        }
-        mediaPlayer = null
-        updateState(playerState = PlayerState.IDLE)
-    }
-
-    private fun startProgressUpdates() {
-        stopProgressUpdates()
-        progressJob = viewModelScope.launch {
-            while (currentState.playerState == PlayerState.PLAYING) {
-                val mp = mediaPlayer
-                if (mp != null) {
-                    val posMs = mp.currentPosition.coerceAtLeast(0)
-                    updateState(progress = formatMsToMmSs(posMs.toLong()))
-                }
-                delay(PROGRESS_UPDATE_INTERVAL_MS)
-            }
-
-            if (currentState.playerState == PlayerState.COMPLETED) {
-                updateState(progress = formatMsToMmSs(0L))
-            } else if (currentState.playerState != PlayerState.PLAYING) {
-                val mp = mediaPlayer
-                if (mp != null) {
-                    val posMs = mp.currentPosition.coerceAtLeast(0)
-                    updateState(progress = formatMsToMmSs(posMs.toLong()))
-                }
-            }
-        }
-    }
-
-    private fun stopProgressUpdates() {
-        progressJob?.cancel()
-        progressJob = null
     }
 
     private fun updateState(
@@ -254,38 +155,7 @@ class AudioPlayerViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        stopProgressUpdates()
-        releasePlayer()
+        playerStateJob?.cancel()
+        playerStateJob = null
     }
-
-    companion object {
-        private const val PROGRESS_UPDATE_INTERVAL_MS = 300L
-    }
-}
-
-enum class PlayerState {
-    IDLE,
-    PREPARING,
-    PREPARED,
-    PLAYING,
-    PAUSED,
-    COMPLETED,
-    ERROR
-}
-
-sealed class AddToPlaylistResult {
-    data class Added(val playlistName: String) : AddToPlaylistResult()
-    data class AlreadyInPlaylist(val playlistName: String) : AddToPlaylistResult()
-}
-
-data class AudioPlayerScreenState(
-    val playerState: PlayerState,
-    val progress: String,
-    val isFavorite: Boolean,
-    val playlists: List<Playlist> = emptyList(),
-    val addToPlaylistResult: AddToPlaylistResult? = null,
-    val navigateToCreatePlaylist: Boolean = false
-) {
-    val isPlaying: Boolean
-        get() = playerState == PlayerState.PLAYING
 }
